@@ -11,14 +11,21 @@ config_version=5
 [application]
 
 config/name="Blocktris"
-config/features=PackedStringArray("4.2", "GL Compatibility")
-config/icon="res://Assets/icon.svg"
+run/main_scene="res://Scenes/Main_Scene.tscn"
+config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
+config/icon="res://Assets/textures/icon.svg"
 
 [dotnet]
 
 project/assembly_name="Blocktris"
 
+[filesystem]
+
+import/blender/enabled.android=true
+import/blender/enabled.web=true
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+lights_and_shadows/use_physical_light_units=true
