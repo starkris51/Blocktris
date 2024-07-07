@@ -1,22 +1,30 @@
 [gd_scene load_steps=6 format=3 uid="uid://v7msiomru4v2"]
 
-[ext_resource type="PackedScene" uid="uid://bq4hfvv0iq1ry" path="res://TetrisBoard.tscn" id="1_tdpiu"]
+[ext_resource type="Script" path="res://Scripts/GameManager.cs" id="1_poilr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yg481"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+sky_horizon_color = Color(0.586491, 0.670454, 0.714415, 1)
+sky_curve = 0.15
+ground_bottom_color = Color(0.379113, 0.530558, 0.80536, 1)
 ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_curve = 0.0151572
 
 [sub_resource type="Sky" id="Sky_ycm83"]
 sky_material = SubResource("ProceduralSkyMaterial_yg481")
 
 [sub_resource type="Environment" id="Environment_jpuga"]
 background_mode = 2
+background_energy_multiplier = 1.17
 sky = SubResource("Sky_ycm83")
+sky_custom_fov = 41.7
 tonemap_mode = 2
+glow_intensity = 2.65
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_vw4rr"]
+exposure_multiplier = 1.396
 
 [node name="MainScene" type="Node3D"]
+script = ExtResource("1_poilr")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_jpuga")
@@ -24,7 +32,5 @@ camera_attributes = SubResource("CameraAttributesPractical_vw4rr")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 20, 39.0105)
-fov = 42.8
+fov = 60.0
 near = 10.0
-
-[node name="TetrisBoard" parent="." instance=ExtResource("1_tdpiu")]

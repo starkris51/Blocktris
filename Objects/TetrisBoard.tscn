@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bq4hfvv0iq1ry"]
 
 [ext_resource type="MeshLibrary" uid="uid://djyghtlnnjiov" path="res://Assets/mesh libary/TetrominoBlockMeshLibary.tres" id="1_byhua"]
-[ext_resource type="Script" path="res://Board.cs" id="2_amddx"]
-[ext_resource type="Script" path="res://Tetromino.cs" id="3_p3oyl"]
+[ext_resource type="Script" path="res://Scripts/Board.cs" id="2_amddx"]
+[ext_resource type="Script" path="res://Scripts/Tetromino.cs" id="3_p3oyl"]
 
 [node name="TetrisBoard" type="GridMap"]
 mesh_library = ExtResource("1_byhua")

@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://dsel034hjma1u"]
+
+[ext_resource type="PackedScene" uid="uid://bq4hfvv0iq1ry" path="res://Objects/TetrisBoard.tscn" id="1_kvv6e"]
+[ext_resource type="Script" path="res://Scripts/InputHandler.cs" id="1_oxo0d"]
+[ext_resource type="Script" path="res://Scripts/Player.cs" id="1_s2pee"]
+
+[node name="Player" type="Node3D"]
+script = ExtResource("1_s2pee")
+
+[node name="PlayerInputs" type="Node" parent="."]
+script = ExtResource("1_oxo0d")
+
+[node name="TetrisBoard" parent="." instance=ExtResource("1_kvv6e")]
