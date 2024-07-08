@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c018rdunaluox"]
+
+[ext_resource type="Script" path="res://Scripts/GameManager.cs" id="1_yfrst"]
+[ext_resource type="Script" path="res://Scripts/BagSystem.cs" id="2_hl6av"]
+
+[node name="GameManager" type="Node"]
+script = ExtResource("1_yfrst")
+
+[node name="BagSystem" type="Node" parent="."]
+script = ExtResource("2_hl6av")

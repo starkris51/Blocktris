@@ -13,25 +13,27 @@ public partial class InputHandler : Node
 		_tetromino = _board.GetNode<Tetromino>("Tetromino");
 	}
 
-	public override void _Input(InputEvent @event)
+	public override void _Process(double delta)
 	{
-		base._Input(@event);
-
-		if (@event.IsActionPressed("ui_left"))
+		if (Input.IsActionJustPressed("ui_left"))
 		{
 			_tetromino.MovePiece(-1, 0);
 		}
-		else if (@event.IsAction("ui_right"))
+		if (Input.IsActionJustPressed("ui_right"))
 		{
 			_tetromino.MovePiece(1, 0);
 		}
-		if (@event.IsAction("ui_down"))
+		if (Input.IsActionJustPressed("ui_down"))
 		{
 			_tetromino.MovePiece(0, -1);
 		}
-		if (@event.IsActionPressed("ui_up"))
+		if (Input.IsActionJustPressed("ui_up"))
 		{
-			_tetromino.RotatePiece();
+			_tetromino.RotatePiece(true);
+		}
+		if (Input.IsActionJustPressed("ui_space"))
+		{
+			_tetromino.HardDrop();
 		}
 	}
 }

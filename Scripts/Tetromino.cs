@@ -17,7 +17,7 @@ public partial class Tetromino : GridMap
 
 	private Board _board;
 
-	private static readonly int[,,,] TetrominoData = new int[7, 4, 4, 4]
+	private readonly int[,,,] TetrominoData = new int[7, 4, 4, 4]
 	{
 		{ // O-Tetromino
 			{
@@ -201,8 +201,35 @@ public partial class Tetromino : GridMap
 				{ 0, 0, 0, 0 }
 			}
 		},
+	};
 
+	private readonly int[,,] srsKickNormal = new int[8, 5, 2] {
+		{{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}}, // 0 -> 1
+		{{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}},    // 1 -> 0
+		{{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}},    // 1 -> 2
+		{{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}},// 2 -> 1
+		{{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}},   // 2 -> 3
+		{{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}}, // 3 -> 2
+		{{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}},// 3 -> 0
+		{{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}}     // 0 -> 3
+	};
 
+	private readonly int[,,] srsKickI = new int[8, 5, 2] {
+		{{0, 0}, {-2, 0}, {1, 0}, {-2, -1}, {1, 2}},  // 0 -> 1
+		{{0, 0}, {2, 0}, {-1, 0}, {2, 1}, {-1, -2}},  // 1 -> 0
+		{{0, 0}, {-1, 0}, {2, 0}, {-1, 2}, {2, -1}},  // 1 -> 2
+		{{0, 0}, {1, 0}, {-2, 0}, {1, -2}, {-2, 1}},  // 2 -> 1
+		{{0, 0}, {2, 0}, {-1, 0}, {2, 1}, {-1, -2}},  // 2 -> 3
+		{{0, 0}, {-2, 0}, {1, 0}, {-2, -1}, {1, 2}},  // 3 -> 2
+		{{0, 0}, {1, 0}, {-2, 0}, {1, -2}, {-2, 1}},  // 3 -> 0
+		{{0, 0}, {-1, 0}, {2, 0}, {-1, 2}, {2, -1}}   // 0 -> 3
+	};
+
+	private readonly int[,] transitionTable = new int[4, 2] {
+		{0, 7}, // 0 -> 1 (clockwise), 0 -> 3 (counterclockwise)
+		{2, 5}, // 1 -> 2 (clockwise), 1 -> 0 (counterclockwise)
+		{4, 3}, // 2 -> 3 (clockwise), 2 -> 1 (counterclockwise)
+		{6, 1}  // 3 -> 0 (clockwise), 3 -> 2 (counterclockwise)
 	};
 
 	private readonly int[,] matrix = new int[4, 4];
@@ -234,7 +261,7 @@ public partial class Tetromino : GridMap
 				if (matrix[i, j] == 1)
 				{
 					Vector3I positon = new(x + i, y - j, 0);
-					SetCellItem(positon, 0, 4);
+					SetCellItem(positon, (int)currentPiece, 4);
 
 				}
 			}
@@ -255,15 +282,52 @@ public partial class Tetromino : GridMap
 		return y;
 	}
 
-	public void RotatePiece()
+	public void RotatePiece(bool clockwise)
 	{
+		int oldrotationstate = rotationState;
+
 		if (!canUseTetromino)
 		{
 			return;
 		}
 
-		rotationState = (rotationState + 1) % 4;
+		if (clockwise)
+		{
+			rotationState = (rotationState + 1) % 4;
+		}
+		else
+		{
+			rotationState = (rotationState - 1 + 4) % 4;
+		}
 
+		UpdatePiece();
+
+		int transition = transitionTable[oldrotationstate, clockwise ? 0 : 1];
+
+		for (int i = 0; i < 5; i++)
+		{
+
+			int dx = (currentPiece == TetrisPiece.I) ? srsKickI[transition, i, 0] : srsKickNormal[transition, i, 0];
+			int dy = (currentPiece == TetrisPiece.I) ? srsKickI[transition, i, 1] : srsKickNormal[transition, i, 1];
+
+			x += dx;
+			y += dy;
+
+			if (_board.CheckCollision())
+			{
+				x -= dx;
+				y -= dy;
+				continue;
+
+			}
+			else
+			{
+				UpdatePiece();
+				return;
+			}
+		}
+
+		rotationState = oldrotationstate;
 		UpdatePiece();
 	}
 
@@ -277,20 +341,30 @@ public partial class Tetromino : GridMap
 		x += dx;
 		y += dy;
 
-		if (_board.CheckCollision() == true)
+		if (_board.CheckCollision())
 		{
 			x -= dx;
 			y -= dy;
 
 			if (dy < 0)
 			{
-				_board.PlacePiece();
+				_board.PlacePiece((int)currentPiece);
 			}
 		}
 		else
 		{
 			UpdatePiece();
 		}
+	}
+
+	public void HardDrop()
+	{
+		while (!_board.CheckCollision())
+		{
+			y -= 1;
+		}
+		y += 1;
+		_board.PlacePiece((int)currentPiece);
 	}
 
 	public void SwitchPieceTest()

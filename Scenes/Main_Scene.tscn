@@ -1,10 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://v7msiomru4v2"]
 
-[ext_resource type="Script" path="res://Scripts/GameManager.cs" id="1_poilr"]
+[ext_resource type="PackedScene" uid="uid://c018rdunaluox" path="res://Objects/game_manager.tscn" id="1_ajdr0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yg481"]
 sky_horizon_color = Color(0.586491, 0.670454, 0.714415, 1)
-sky_curve = 0.15
 ground_bottom_color = Color(0.379113, 0.530558, 0.80536, 1)
 ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 ground_curve = 0.0151572
@@ -24,13 +23,14 @@ glow_intensity = 2.65
 exposure_multiplier = 1.396
 
 [node name="MainScene" type="Node3D"]
-script = ExtResource("1_poilr")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_jpuga")
 camera_attributes = SubResource("CameraAttributesPractical_vw4rr")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 20, 39.0105)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17618, 10.2593, 26.6848)
 fov = 60.0
 near = 10.0
+
+[node name="GameManager" parent="." instance=ExtResource("1_ajdr0")]
