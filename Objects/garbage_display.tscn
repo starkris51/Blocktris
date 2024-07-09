@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://ppc3n7g3672d"]
+
+[ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_5vkri"]
+
+[node name="GarbageDisplay" type="GridMap"]
+mesh_library = ExtResource("1_5vkri")
+cell_size = Vector3(1, 1, 1)
+cell_scale = 0.5
+data = {
+"cells": PackedInt32Array(65534, 0, 1114120, 131070, 0, 1114120, 196606, 0, 1114120, 262142, 0, 1114120, 327678, 0, 1114120, 393214, 0, 1114120, 458750, 0, 1114120, 524286, 0, 1114120, 589822, 0, 1114120, 655358, 0, 1114120, 720894, 0, 1114120, 786430, 0, 1114120, 851966, 0, 1114120, 917502, 0, 1114120, 983038, 0, 1114120, 1048574, 0, 1114120, 1114110, 0, 1114120, 1179646, 0, 1114120, 1245182, 0, 1114120, 1310718, 0, 1114120, -1, 0, 524296)
+}

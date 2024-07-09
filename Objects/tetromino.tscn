@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3kcscecpy3xw"]
+
+[ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_8j5r7"]
+[ext_resource type="Script" path="res://Scripts/Tetromino.cs" id="2_fqbex"]
+
+[node name="Tetromino" type="GridMap"]
+mesh_library = ExtResource("1_8j5r7")
+cell_size = Vector3(1, 1, 1)
+cell_scale = 0.5
+script = ExtResource("2_fqbex")
+
+[node name="GhostLight" type="OmniLight3D" parent="."]
+light_intensity_lumens = 27262.6
+shadow_enabled = true
+shadow_blur = 0.0
+distance_fade_enabled = true
+omni_range = 11.1056

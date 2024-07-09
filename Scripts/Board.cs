@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public partial class Board : GridMap
 {
@@ -10,7 +12,7 @@ public partial class Board : GridMap
 		public int orientation;
 	}
 
-	private readonly Cell[,] BoardData = new Cell[10, 20];
+	private readonly Cell[,] BoardData = new Cell[10, 40];
 
 	private Tetromino _tetromino;
 	private Player _player;
@@ -19,8 +21,16 @@ public partial class Board : GridMap
 
 	private BagSystem _bagSystem;
 
-	private int BoardHeight = 20;
+	private Node3D _boardHUD;
+	private Node3D _upcomingPieces;
+	private tetromino_display_hud _storeTetromino;
+
+
+	private int BoardHeight = 40;
 	private int BoardWidth = 10;
+
+	private int StoredPiece = -1;
+	private bool CanStore = true;
 
 	public void UpdateBoard()
 	{
@@ -48,6 +58,7 @@ public partial class Board : GridMap
 		UpdateBoard();
 
 		_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
+		UpdateUpcomingPieces();
 	}
 
 	public bool CheckCollision()
@@ -152,16 +163,58 @@ public partial class Board : GridMap
 		CheckLines();
 		UpdateBoard();
 		_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
+		CanStore = true;
+		UpdateUpcomingPieces();
 	}
 
+	public void UpdateUpcomingPieces()
+	{
+		List<int> PlayerBag = _bagSystem.GetUpcomingPieces(PlayerID, 5);
+		int index = 0;
+
+		foreach (Node3D PieceDisplay in _upcomingPieces.GetChildren().Cast<Node3D>())
+		{
+			PieceDisplay.GetNode<tetromino_display_hud>("PieceDisplay").RenderPiece(PlayerBag[index]);
+			index++;
+		}
+	}
+
+	public void StorePiece()
+	{
+		if (!CanStore)
+		{
+			return;
+		}
+
+		int currentPiece = _tetromino.GetPiece();
+
+		if (StoredPiece == -1)
+		{
+			StoredPiece = currentPiece;
+			_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
+		}
+		else
+		{
+			_tetromino.NewPiece(StoredPiece);
+			StoredPiece = currentPiece;
+		}
+
+		_storeTetromino.RenderPiece(StoredPiece);
+		UpdateUpcomingPieces();
+		CanStore = false;
+	}
 	public override void _Ready()
 	{
 		_tetromino = GetNode<Tetromino>("Tetromino");
 		_player = GetParent<Player>();
 		_gameManager = _player.GetParent<GameManager>();
 		_bagSystem = _gameManager.GetNode<BagSystem>("BagSystem");
-
+		_boardHUD = GetNode<Node3D>("BoardHUD");
+		_upcomingPieces = _boardHUD.GetNode<Node3D>("UpcomingPieces");
+		_storeTetromino = _boardHUD.GetNode<Node3D>("StoreTetromino").GetChild<tetromino_display_hud>(0);
 		PlayerID = _player.GetPlayerID();
+
+		//_bagSystem.GetPlayerBags(PlayerID);
 	}
 
 

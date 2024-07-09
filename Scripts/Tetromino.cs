@@ -235,11 +235,15 @@ public partial class Tetromino : GridMap
 	private readonly int[,] matrix = new int[4, 4];
 
 	private int x = 3;
-	private int y = 19;
+	private int y = 22;
+
+	private int ghostY = 22;
+	private int ghostX = 3;
 
 	private int rotationState = 0;
 
 	private bool canUseTetromino = false;
+	private OmniLight3D GhostLight;
 
 	TetrisPiece currentPiece;
 
@@ -257,15 +261,46 @@ public partial class Tetromino : GridMap
 			for (int j = 0; j < matrix.GetLength(1); j++)
 			{
 				matrix[i, j] = TetrominoData[(int)currentPiece, rotationState, j, i];
+			}
+		}
 
+		int oldPieceY = y;
+		ghostY = y;
+		ghostX = x;
+
+		while (!_board.CheckCollision())
+		{
+			y -= 1;
+		}
+
+		y++;
+		ghostY = y;
+
+		y = oldPieceY;
+
+		GhostLight.Position = MapToLocal(new Vector3I(ghostX + 1, ghostY - 1, 0));
+
+		for (int i = 0; i < matrix.GetLength(0); i++)
+		{
+			for (int j = 0; j < matrix.GetLength(1); j++)
+			{
 				if (matrix[i, j] == 1)
 				{
 					Vector3I positon = new(x + i, y - j, 0);
 					SetCellItem(positon, (int)currentPiece, 4);
 
+					if (ghostX + i == x + i && ghostY - j == y - j)
+					{
+						continue;
+					}
+
+					Vector3I ghostPosition = new(ghostX + i, ghostY - j, 0);
+					SetCellItem(ghostPosition, 9, 0);
+
 				}
 			}
 		}
+
 	}
 	public int[,] GetMatrix()
 	{
@@ -367,9 +402,9 @@ public partial class Tetromino : GridMap
 		_board.PlacePiece((int)currentPiece);
 	}
 
-	public void SwitchPieceTest()
+	public int GetPiece()
 	{
-		currentPiece += 1;
+		return (int)currentPiece;
 	}
 
 	public void NewPiece(int Piece)
@@ -380,7 +415,7 @@ public partial class Tetromino : GridMap
 		}
 
 		currentPiece = (TetrisPiece)Piece;
-		y = 19;
+		y = 22;
 		x = 3;
 		rotationState = 0;
 		UpdatePiece();
@@ -388,7 +423,8 @@ public partial class Tetromino : GridMap
 
 	public override void _Ready()
 	{
-		_board = (Board)GetParent();
+		_board = GetParent<Board>();
+		GhostLight = GetChild<OmniLight3D>(0);
 	}
 
 

@@ -31,6 +31,10 @@ public partial class InputHandler : Node
 		{
 			_tetromino.RotatePiece(true);
 		}
+		if (Input.IsActionJustPressed("ui_test"))
+		{
+			_board.StorePiece();
+		}
 		if (Input.IsActionJustPressed("ui_space"))
 		{
 			_tetromino.HardDrop();

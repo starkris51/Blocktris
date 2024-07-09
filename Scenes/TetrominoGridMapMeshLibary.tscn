@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://b54b8nxxkv1p5"]
+[gd_scene load_steps=19 format=3 uid="uid://b54b8nxxkv1p5"]
 
 [ext_resource type="Material" uid="uid://cpk2cd5q5xht5" path="res://Assets/materials/I_Piece_Material.tres" id="1_gtgrx"]
 
@@ -41,7 +41,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_ky7uu")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aekr8"]
-albedo_color = Color(0.982083, 0.978763, 7.70092e-07, 1)
+albedo_color = Color(0.98614, 0.900328, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ckc4e"]
 albedo_color = Color(1, 0.310579, 0.995531, 1)
@@ -135,6 +135,14 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_ho3uj")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0pjn"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(1, 1, 1, 0.784314)
+
+[sub_resource type="BoxMesh" id="BoxMesh_m1qun"]
+material = SubResource("StandardMaterial3D_r0pjn")
+
 [node name="TetrominoGridMapMeshLibary" type="Node3D"]
 
 [node name="O_Tetromino" type="Node3D" parent="."]
@@ -206,3 +214,9 @@ skeleton = NodePath("")
 transform = Transform3D(-2.18557e-09, -1, 0, 0.05, -4.37114e-08, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("ArrayMesh_2644l")
 skeleton = NodePath("")
+
+[node name="GhostPiece" type="Node3D" parent="."]
+
+[node name="GhostBlock" type="MeshInstance3D" parent="GhostPiece"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+mesh = SubResource("BoxMesh_m1qun")

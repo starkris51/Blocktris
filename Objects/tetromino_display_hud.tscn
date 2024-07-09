@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://1dajnn7sutgq"]
+
+[ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_2ghsp"]
+[ext_resource type="Script" path="res://Scripts/tetromino_display_hud.cs" id="2_hskuc"]
+
+[node name="PieceDisplay" type="GridMap"]
+mesh_library = ExtResource("1_2ghsp")
+cell_size = Vector3(0.75, 0.75, 0.75)
+cell_scale = 0.37
+script = ExtResource("2_hskuc")
