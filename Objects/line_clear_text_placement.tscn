@@ -1,0 +1,77 @@
+[gd_scene load_steps=6 format=3 uid="uid://dkfqi76aj7f2x"]
+
+[ext_resource type="Script" path="res://Scripts/line_clear_text.cs" id="1_wkv38"]
+
+[sub_resource type="Animation" id="Animation_2nihk"]
+resource_name = "LineClear"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LineClearText:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 2, 3.5, 6),
+"transitions": PackedFloat32Array(1, 0.0647043, 1.27456, 1.27456, 16),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(6, 6, 6), Vector3(5.38311, 5.38311, 5.38311), Vector3(5.38311, 5.38311, 5.38311), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LineClearText:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_gt0sx"]
+resource_name = "TSpin"
+
+[sub_resource type="Animation" id="Animation_e6wbw"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_q1pit"]
+_data = {
+"LineClear": SubResource("Animation_2nihk"),
+"RESET": SubResource("Animation_e6wbw"),
+"TSpin": SubResource("Animation_gt0sx")
+}
+
+[node name="LineClearTextPlacement" type="Node3D"]
+script = ExtResource("1_wkv38")
+
+[node name="LineClearText" type="Label3D" parent="."]
+transform = Transform3D(5.38311, 0, 0, 0, 5.38311, 0, 0, 0, 5.38311, 0, 0, 0)
+transparency = 1.0
+text = "SINGLE"
+font_size = 72
+horizontal_alignment = 2
+uppercase = true
+
+[node name="TSpinText" type="Label3D" parent="LineClearText"]
+transform = Transform3D(1.16421, 0, 0, 0, 1.16421, 0, 0, 0, 1.16421, 0, 0.156301, 0)
+modulate = Color(1, 0, 1, 1)
+outline_modulate = Color(0.383458, 0.000102133, 0.3841, 1)
+text = "T Spin Mini"
+font_size = 30
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="B2BText" type="Label3D" parent="LineClearText"]
+transform = Transform3D(0.756, 0, 0, 0, 0.756, 0, 0, 0, 0.756, 0, -0.162406, 0)
+modulate = Color(0.86793, 0.841936, 1.15514e-06, 1)
+outline_modulate = Color(0.586526, 0.586526, 0, 1)
+text = "Back To Back 2x"
+horizontal_alignment = 2
+vertical_alignment = 0
+
+[node name="LineClear" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_q1pit")
+}

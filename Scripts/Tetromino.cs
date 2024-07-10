@@ -1,10 +1,11 @@
 using Godot;
 using System;
+using System.Reflection.Metadata.Ecma335;
 
 public partial class Tetromino : GridMap
 {
 
-	enum TetrisPiece
+	public enum TetrisPiece
 	{
 		O = 0,
 		I = 1,
@@ -13,6 +14,13 @@ public partial class Tetromino : GridMap
 		J = 4,
 		S = 5,
 		Z = 6
+	}
+
+	public enum TSpinType
+	{
+		None,
+		Normal,
+		Mini
 	}
 
 	private Board _board;
@@ -245,6 +253,8 @@ public partial class Tetromino : GridMap
 	private bool canUseTetromino = false;
 	private OmniLight3D GhostLight;
 
+	public TSpinType currentTSpin;
+
 	TetrisPiece currentPiece;
 
 	public void UpdatePiece()
@@ -353,10 +363,10 @@ public partial class Tetromino : GridMap
 				x -= dx;
 				y -= dy;
 				continue;
-
 			}
 			else
 			{
+				currentTSpin = IsTSpin();
 				UpdatePiece();
 				return;
 			}
@@ -392,6 +402,41 @@ public partial class Tetromino : GridMap
 		}
 	}
 
+	public TSpinType IsTSpin()
+	{
+		if (currentPiece != TetrisPiece.T) return TSpinType.None;
+
+		int filledcorners = 0;
+
+		int[,] TPieceCorners = new int[4, 2]
+		{
+			{ x, y },
+			{ x + 2, y },
+			{ x, y - 2 },
+			{ x + 2, y - 2 }
+		};
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (_board.IsOccupied(TPieceCorners[i, 0], TPieceCorners[i, 1]))
+			{
+				filledcorners++;
+			}
+		}
+
+		if (filledcorners >= 3)
+		{
+			return TSpinType.Normal;
+
+		}
+		else if (filledcorners == 2)
+		{
+			return TSpinType.Mini;
+		}
+
+		return TSpinType.None;
+	}
+
 	public void HardDrop()
 	{
 		while (!_board.CheckCollision())
@@ -402,9 +447,9 @@ public partial class Tetromino : GridMap
 		_board.PlacePiece((int)currentPiece);
 	}
 
-	public int GetPiece()
+	public TetrisPiece GetPiece()
 	{
-		return (int)currentPiece;
+		return currentPiece;
 	}
 
 	public void NewPiece(int Piece)

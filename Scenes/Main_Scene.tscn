@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://v7msiomru4v2"]
 
 [ext_resource type="PackedScene" uid="uid://c018rdunaluox" path="res://Objects/game_manager.tscn" id="1_ajdr0"]
-[ext_resource type="Script" path="res://Scripts/FpsCounter.cs" id="2_bij7d"]
+[ext_resource type="Script" path="res://Scripts/FPSCounter.cs" id="2_7njbx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yg481"]
 sky_horizon_color = Color(0.586491, 0.670454, 0.714415, 1)
@@ -37,8 +37,8 @@ near = 10.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="FPS Counter" type="Label" parent="CanvasLayer"]
+[node name="FPSCounter" type="Label" parent="CanvasLayer"]
 offset_left = 1.0
-offset_right = 105.0
-offset_bottom = 42.0
-script = ExtResource("2_bij7d")
+offset_right = 163.0
+offset_bottom = 76.0
+script = ExtResource("2_7njbx")

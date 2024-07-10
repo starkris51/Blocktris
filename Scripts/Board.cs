@@ -24,6 +24,7 @@ public partial class Board : GridMap
 	private Node3D _boardHUD;
 	private Node3D _upcomingPieces;
 	private tetromino_display_hud _storeTetromino;
+	private line_clear_text _LineClearText;
 
 
 	private int BoardHeight = 40;
@@ -106,16 +107,13 @@ public partial class Board : GridMap
 				BoardData[j, i] = BoardData[j, i + 1];
 			}
 		}
-
-		/*for (int j = 0; j < BoardWidth; j++)
-		{
-			BoardData[j, BoardHeight - 1] = new Cell { isFilled = false, item = -1, orientation = 4 };
-		}*/
 	}
 
 	private void CheckLines()
 	{
-		for (int i = 0; i < BoardData.GetLength(1); i++)
+		int rowsCleared = 0;
+
+		for (int i = BoardData.GetLength(1) - 1; i >= 0; i--)
 		{
 			bool isRowComplete = true;
 
@@ -131,10 +129,26 @@ public partial class Board : GridMap
 			if (isRowComplete)
 			{
 				DeleteRow(i);
-				i--;
+				rowsCleared++;
 			}
-
 		}
+
+		if (rowsCleared > 0 || _tetromino.currentTSpin != Tetromino.TSpinType.None)
+		{
+			_LineClearText.RenderLineClearText(rowsCleared, _tetromino.currentTSpin, 0);
+		}
+
+		_tetromino.currentTSpin = Tetromino.TSpinType.None;
+	}
+
+	public bool IsOccupied(int x, int y)
+	{
+		if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
+		{
+			return true;
+		}
+
+		return BoardData[x, y].isFilled;
 	}
 
 	public void PlacePiece(int item)
@@ -186,7 +200,7 @@ public partial class Board : GridMap
 			return;
 		}
 
-		int currentPiece = _tetromino.GetPiece();
+		int currentPiece = (int)_tetromino.GetPiece();
 
 		if (StoredPiece == -1)
 		{
@@ -212,6 +226,7 @@ public partial class Board : GridMap
 		_boardHUD = GetNode<Node3D>("BoardHUD");
 		_upcomingPieces = _boardHUD.GetNode<Node3D>("UpcomingPieces");
 		_storeTetromino = _boardHUD.GetNode<Node3D>("StoreTetromino").GetChild<tetromino_display_hud>(0);
+		_LineClearText = _boardHUD.GetNode<line_clear_text>("LineClearTextPlacement");
 		PlayerID = _player.GetPlayerID();
 
 		//_bagSystem.GetPlayerBags(PlayerID);
