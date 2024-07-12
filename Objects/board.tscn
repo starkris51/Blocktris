@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bq4hfvv0iq1ry"]
+[gd_scene load_steps=10 format=3 uid="uid://bq4hfvv0iq1ry"]
 
 [ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_0p03k"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="2_amddx"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ppc3n7g3672d" path="res://Objects/garbage_display.tscn" id="3_eb7gt"]
 [ext_resource type="PackedScene" uid="uid://1dajnn7sutgq" path="res://Objects/tetromino_display_hud.tscn" id="4_coyhh"]
 [ext_resource type="PackedScene" uid="uid://dkfqi76aj7f2x" path="res://Objects/line_clear_text_placement.tscn" id="5_ph725"]
+[ext_resource type="PackedScene" uid="uid://c5kwybaj2lglw" path="res://Objects/combo_text_placement.tscn" id="6_jhclj"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_pk2os"]
 
@@ -38,8 +39,8 @@ surface_material_override/0 = SubResource("StandardMaterial3D_2a0bq")
 [node name="LineClearTextPlacement" parent="BoardHUD" instance=ExtResource("5_ph725")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75828, 15, 0.00421906)
 
-[node name="ComboTextPlacement" type="Node3D" parent="BoardHUD"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 14, 0)
+[node name="ComboTextPlacement" parent="BoardHUD" instance=ExtResource("6_jhclj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 11, 0)
 
 [node name="UpcomingPieces" type="Node3D" parent="BoardHUD"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 18, 0)

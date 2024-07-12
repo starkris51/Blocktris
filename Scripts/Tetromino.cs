@@ -407,6 +407,8 @@ public partial class Tetromino : GridMap
 		if (currentPiece != TetrisPiece.T) return TSpinType.None;
 
 		int filledcorners = 0;
+		int frontCorners = 0;
+		int backCorners = 0;
 
 		int[,] TPieceCorners = new int[4, 2]
 		{
@@ -418,20 +420,79 @@ public partial class Tetromino : GridMap
 
 		for (int i = 0; i < 4; i++)
 		{
+
 			if (_board.IsOccupied(TPieceCorners[i, 0], TPieceCorners[i, 1]))
 			{
 				filledcorners++;
+
+				switch (rotationState)
+				{
+					case 0:
+
+						if (i == 0 || i == 1)
+						{
+							frontCorners++;
+						}
+						else
+						{
+							backCorners++;
+						}
+
+						break;
+					case 1:
+
+						if (i == 1 || i == 3)
+						{
+							frontCorners++;
+						}
+						else
+						{
+							backCorners++;
+						}
+
+						break;
+					case 2:
+
+						if (i == 2 || i == 3)
+						{
+							frontCorners++;
+						}
+						else
+						{
+							backCorners++;
+						}
+
+						break;
+					case 3:
+
+						if (i == 0 || i == 2)
+						{
+							frontCorners++;
+						}
+						else
+						{
+							backCorners++;
+						}
+
+						break;
+				}
+
 			}
+
 		}
 
 		if (filledcorners >= 3)
 		{
-			return TSpinType.Normal;
 
-		}
-		else if (filledcorners == 2)
-		{
-			return TSpinType.Mini;
+			if (frontCorners >= 2 && backCorners >= 1)
+			{
+				return TSpinType.Normal;
+			}
+			else if (frontCorners <= 1 && backCorners >= 2)
+			{
+				return TSpinType.Mini;
+			}
+
 		}
 
 		return TSpinType.None;

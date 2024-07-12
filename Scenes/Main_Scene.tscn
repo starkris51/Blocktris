@@ -29,7 +29,7 @@ environment = SubResource("Environment_jpuga")
 camera_attributes = SubResource("CameraAttributesPractical_vw4rr")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17618, 10.2593, 26.6848)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17618, 10.2593, 28.5524)
 fov = 60.0
 near = 10.0
 

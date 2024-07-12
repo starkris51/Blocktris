@@ -30,11 +30,11 @@ tracks/1/keys = {
 "values": [true, false]
 }
 
-[sub_resource type="Animation" id="Animation_gt0sx"]
-resource_name = "TSpin"
-
 [sub_resource type="Animation" id="Animation_e6wbw"]
 length = 0.001
+
+[sub_resource type="Animation" id="Animation_gt0sx"]
+resource_name = "TSpin"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_q1pit"]
 _data = {
