@@ -23,14 +23,19 @@ public partial class Board : GridMap
 
 	private Node3D _boardHUD;
 	private Node3D _upcomingPieces;
-	private tetromino_display_hud _storeTetromino;
-	private line_clear_text _LineClearText;
+	private TetrominoDisplayHud _storeTetromino;
+	private LineClearText _LineClearText;
 
+	private ComboText _ComboText;
 
 	private int BoardHeight = 40;
 	private int BoardWidth = 10;
 
 	private int StoredPiece = -1;
+	private int Combo = 0;
+	private bool IsCombo = false;
+	private int BackToBackCombo = 0;
+	private bool IsBackToBack = false;
 	private bool CanStore = true;
 
 	public void UpdateBoard()
@@ -57,6 +62,8 @@ public partial class Board : GridMap
 		}
 
 		UpdateBoard();
+
+		Combo = 0;
 
 		_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
 		UpdateUpcomingPieces();
@@ -133,12 +140,42 @@ public partial class Board : GridMap
 			}
 		}
 
+		if (rowsCleared >= 4 || _tetromino.currentTSpin != Tetromino.TSpinType.None)
+		{
+			if (IsBackToBack)
+			{
+				BackToBackCombo++;
+			}
+
+			IsBackToBack = true;
+		}
+		else if (rowsCleared < 4 && rowsCleared > 0 && _tetromino.currentTSpin == Tetromino.TSpinType.None && IsBackToBack)
+		{
+			BackToBackCombo = 0;
+			IsBackToBack = false;
+		}
+
 		if (rowsCleared > 0 || _tetromino.currentTSpin != Tetromino.TSpinType.None)
 		{
-			_LineClearText.RenderLineClearText(rowsCleared, _tetromino.currentTSpin, 0);
+			_LineClearText.RenderLineClearText(rowsCleared, _tetromino.currentTSpin, BackToBackCombo);
 		}
 
 		_tetromino.currentTSpin = Tetromino.TSpinType.None;
+
+		if (rowsCleared > 0 && IsCombo)
+		{
+			Combo++;
+			_ComboText.DisplayCombo(Combo);
+		}
+		else if (Combo <= 0 && rowsCleared > 0 && !IsCombo)
+		{
+			IsCombo = true;
+		}
+		else
+		{
+			IsCombo = false;
+			Combo = 0;
+		}
 	}
 
 	public bool IsOccupied(int x, int y)
@@ -181,6 +218,20 @@ public partial class Board : GridMap
 		UpdateUpcomingPieces();
 	}
 
+	/*public void SendGarbage(int Amount)
+	{
+		for (int i = 1; i < Amount; i++)
+		{
+
+			for (int j = 0; j < BoardData.GetLength(0); j++)
+			{
+				BoardData[j, i - 1] = new Cell {isFilled = true};
+				BoardData[j, i] = BoardData[j, i + 1];
+			}
+
+		}
+	}*/
+
 	public void UpdateUpcomingPieces()
 	{
 		List<int> PlayerBag = _bagSystem.GetUpcomingPieces(PlayerID, 5);
@@ -188,7 +239,7 @@ public partial class Board : GridMap
 
 		foreach (Node3D PieceDisplay in _upcomingPieces.GetChildren().Cast<Node3D>())
 		{
-			PieceDisplay.GetNode<tetromino_display_hud>("PieceDisplay").RenderPiece(PlayerBag[index]);
+			PieceDisplay.GetNode<TetrominoDisplayHud>("PieceDisplay").RenderPiece(PlayerBag[index]);
 			index++;
 		}
 	}
@@ -225,10 +276,10 @@ public partial class Board : GridMap
 		_bagSystem = _gameManager.GetNode<BagSystem>("BagSystem");
 		_boardHUD = GetNode<Node3D>("BoardHUD");
 		_upcomingPieces = _boardHUD.GetNode<Node3D>("UpcomingPieces");
-		_storeTetromino = _boardHUD.GetNode<Node3D>("StoreTetromino").GetChild<tetromino_display_hud>(0);
-		_LineClearText = _boardHUD.GetNode<line_clear_text>("LineClearTextPlacement");
+		_storeTetromino = _boardHUD.GetNode<Node3D>("StoreTetromino").GetChild<TetrominoDisplayHud>(0);
+		_LineClearText = _boardHUD.GetNode<LineClearText>("LineClearTextPlacement");
+		_ComboText = _boardHUD.GetNode<ComboText>("ComboTextPlacement");
 		PlayerID = _player.GetPlayerID();
-
 		//_bagSystem.GetPlayerBags(PlayerID);
 	}
 

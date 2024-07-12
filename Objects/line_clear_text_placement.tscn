@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkfqi76aj7f2x"]
 
-[ext_resource type="Script" path="res://Scripts/line_clear_text.cs" id="1_wkv38"]
+[ext_resource type="Script" path="res://Scripts/LineClearText.cs" id="1_tyt3d"]
 
 [sub_resource type="Animation" id="Animation_2nihk"]
 resource_name = "LineClear"
@@ -44,7 +44,7 @@ _data = {
 }
 
 [node name="LineClearTextPlacement" type="Node3D"]
-script = ExtResource("1_wkv38")
+script = ExtResource("1_tyt3d")
 
 [node name="LineClearText" type="Label3D" parent="."]
 transform = Transform3D(5.38311, 0, 0, 0, 5.38311, 0, 0, 0, 5.38311, 0, 0, 0)
@@ -64,7 +64,7 @@ horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="B2BText" type="Label3D" parent="LineClearText"]
-transform = Transform3D(0.756, 0, 0, 0, 0.756, 0, 0, 0, 0.756, 0, -0.162406, 0)
+transform = Transform3D(0.756, 0, 0, 0, 0.756, 0, 0, 0, 0.756, 0, -0.224238, 0)
 modulate = Color(0.86793, 0.841936, 1.15514e-06, 1)
 outline_modulate = Color(0.586526, 0.586526, 0, 1)
 text = "Back To Back 2x"

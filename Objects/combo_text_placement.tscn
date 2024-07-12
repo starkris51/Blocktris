@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c5kwybaj2lglw"]
 
-[ext_resource type="Script" path="res://Scripts/combo_text.cs" id="1_gwxpp"]
+[ext_resource type="Script" path="res://Scripts/ComboText.cs" id="1_c3knb"]
 
 [sub_resource type="Animation" id="Animation_lb4gc"]
 resource_name = "Combo"
@@ -29,6 +29,37 @@ tracks/1/keys = {
 "update": 1,
 "values": [true, false]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../ComboText:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../ComboText:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.9, 3),
+"transitions": PackedFloat32Array(1, 4.5948, 1),
+"update": 0,
+"values": [Vector3(2.35, 2.35, 2.35), Vector3(2.35, 2.35, 2.35), Vector3(0, 0, 0)]
+}
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../ComboText")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, -0.45146, 0, 0, 1.5, 1, 0.1, 0, 0)
 
 [sub_resource type="Animation" id="Animation_6s5f4"]
 resource_name = "ComboTextSpin"
@@ -81,19 +112,18 @@ _data = {
 }
 
 [node name="ComboTextPlacement" type="Node3D"]
-script = ExtResource("1_gwxpp")
+script = ExtResource("1_c3knb")
 
 [node name="ComboText" type="Label3D" parent="."]
-transform = Transform3D(2.35, 0, 0, 0, 2.35, 0, 0, 0, 2.35, 0, 0, 0)
+transform = Transform3D(2.35, 0, 0, 0, 2.35, 0, 0, 0, 2.35, -0.45146, 0, 0)
 text = "Combo
 "
 font_size = 90
 
 [node name="ComboNumberText" type="Label3D" parent="."]
 transform = Transform3D(0, 0, 0, 0, 0, 0, 0, 0, 0, -2.47718, 7.45058e-08, 0.0127478)
-text = "10"
+text = "0"
 font_size = 90
-outline_size = 30
 horizontal_alignment = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

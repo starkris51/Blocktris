@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class line_clear_text : Node3D
+public partial class LineClearText : Node3D
 {
 
 	private Label3D _lineClearText;

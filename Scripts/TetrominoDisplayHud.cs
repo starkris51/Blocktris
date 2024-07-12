@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class tetromino_display_hud : GridMap
+public partial class TetrominoDisplayHud : GridMap
 {
 
 	private readonly int[,,] TetrominoHudData = new int[,,]

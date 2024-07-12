@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class combo_text : Node3D
+public partial class ComboText : Node3D
 {
 
 	private Label3D _comboText;
@@ -17,18 +17,18 @@ public partial class combo_text : Node3D
 
 		_comboText.Visible = false;
 		_comboNumberText.Visible = false;
+		_comboNumberText.Text = "";
 	}
 
 	public void DisplayCombo(int Combo)
 	{
 
-		_comboText.Text = Combo.ToString();
+		_comboNumberText.Text = Combo.ToString();
 		//_comboText.Scale += new Vector3(Combo, Combo, Combo);
 
-		_comboAnimation.Advance(0);
 		_comboAnimation.Play("RESET");
 		_comboAnimation.Play("Combo");
-		_comboAnimation.Play("ComboNumberText");
+		_comboAnimation.Advance(0);
 
 	}
 

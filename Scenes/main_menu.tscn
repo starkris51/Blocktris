@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ko772rodq6k1"]
+[gd_scene format=3 uid="uid://c1oj45w0lkswf"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -8,20 +8,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Host" type="Button" parent="."]
-layout_mode = 0
-offset_left = 483.0
-offset_top = 240.0
-offset_right = 645.0
-offset_bottom = 283.0
-text = "Host
-"
-
-[node name="Join" type="Button" parent="."]
-layout_mode = 0
-offset_left = 484.0
-offset_top = 297.0
-offset_right = 648.0
-offset_bottom = 343.0
-text = "Join
-"
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -15.5
+offset_right = 35.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Settings"
