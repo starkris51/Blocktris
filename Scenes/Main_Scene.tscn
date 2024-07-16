@@ -37,20 +37,89 @@ near = 10.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="FPSCounter" type="Label" parent="CanvasLayer"]
+[node name="MainMenu" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -218.0
+offset_top = -45.0
+offset_right = 218.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="CanvasLayer/MainMenu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.268
+anchor_right = 0.732
+anchor_bottom = 1.0
+offset_left = 0.152
+offset_right = -0.152008
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainMenu/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainMenu/Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="Join" type="Button" parent="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="FpsCounter" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FPSCounter" type="Label" parent="CanvasLayer/FpsCounter"]
+layout_mode = 0
 offset_right = 162.0
 offset_bottom = 76.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("2_7njbx")
 
-[node name="TextEdit" type="TextEdit" parent="CanvasLayer"]
+[node name="ChatBox" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="TextEdit" type="TextEdit" parent="CanvasLayer/ChatBox"]
+layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.813
 anchor_right = 0.143
 anchor_bottom = 1.0
-offset_top = 0.175964
-offset_right = 0.263992
+offset_top = 494.48
+offset_right = 2.28
+offset_bottom = 495.0
 grow_vertical = 0
 size_flags_horizontal = 0
 size_flags_vertical = 10
+
+[connection signal="pressed" from="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer/Host" to="GameManager" method="Host"]
+[connection signal="pressed" from="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer/Join" to="GameManager" method="Join"]
