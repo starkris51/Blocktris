@@ -9,7 +9,9 @@ public partial class GameManager : Node
 	private BagSystem _bagSystem;
 	private Control _MainMenu;
 	private MultiplayerManager multiplayer_Manager;
-	private CanvasLayer _canvasLayer;
+	private Node3D _mainScene;
+	private Node3D PlayerSpawner;
+	//private CanvasLayer _canvasLayer;
 	//private List<Player> _players = new();
 
 	// Called when the node enters the scene tree for the first time.
@@ -17,21 +19,35 @@ public partial class GameManager : Node
 	{
 		_bagSystem = GetNode<BagSystem>("BagSystem");
 		multiplayer_Manager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
-		_canvasLayer = GetNode<CanvasLayer>("CanvasLayer");
-		_MainMenu = _canvasLayer.GetNode<Control>("MainMenu");
-
+		_mainScene = GetParent<Node3D>();
+		PlayerSpawner = _mainScene.GetNode<Node3D>("Players");
 		//AddPlayer(1);
 	}
 
 	public void Host()
 	{
-		multiplayer_Manager.Host();
-		_MainMenu.Hide();
+		int playerID;
+		playerID = multiplayer_Manager.Host();
+
+		if (playerID == 0)
+		{
+			return;
+		}
+
+		AddPlayer(playerID);
 	}
 
-	public void Join()
+	public async void Join()
 	{
-		multiplayer_Manager.Join();
+		int playerID;
+		playerID = await multiplayer_Manager.Join();
+
+		if (playerID == 0)
+		{
+			return;
+		}
+
+		AddPlayer(playerID);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -44,14 +60,14 @@ public partial class GameManager : Node
 		return _bagSystem.GetNextPiece(id);
 	}*/
 
-	/*public void AddPlayer(int id)
+	public void AddPlayer(int id)
 	{
 		PackedScene playerScene = ResourceLoader.Load<PackedScene>("res://Objects/player.tscn");
 		Player player = playerScene.Instantiate<Player>();
 		player.SetPlayerID(id);
 		_bagSystem.InitializePlayerBag(id);
-		_players.Add(player);
+		//_players.Add(player);
 
-		AddChild(player);
-	}*/
+		PlayerSpawner.AddChild(player);
+	}
 }

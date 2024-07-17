@@ -1,8 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://dsel034hjma1u"]
+[gd_scene load_steps=5 format=3 uid="uid://dsel034hjma1u"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_6k4dh"]
 [ext_resource type="Script" path="res://Scripts/InputHandler.cs" id="2_g1x7c"]
 [ext_resource type="PackedScene" uid="uid://bq4hfvv0iq1ry" path="res://Objects/board.tscn" id="3_fu3yx"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ysv1p"]
+properties/0/path = NodePath("TetrisBoard:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_6k4dh")
@@ -11,3 +19,6 @@ script = ExtResource("1_6k4dh")
 script = ExtResource("2_g1x7c")
 
 [node name="TetrisBoard" parent="." instance=ExtResource("3_fu3yx")]
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ysv1p")
