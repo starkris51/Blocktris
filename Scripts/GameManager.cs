@@ -23,33 +23,7 @@ public partial class GameManager : Node
 		multiplayer_Manager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
 		_mainScene = GetParent<Node3D>();
 		//AddPlayer(1);
-		multiplayer_Manager.Connect("PlayerJoined", new Callable(this, nameof(OnPlayerJoined)));
-	}
-
-	public void Host()
-	{
-		int playerID;
-		playerID = multiplayer_Manager.Host();
-
-		if (playerID == 0)
-		{
-			return;
-		}
-
-		AddPlayer(playerID);
-	}
-
-	public async void Join()
-	{
-		int playerID;
-		playerID = await multiplayer_Manager.Join();
-
-		if (playerID == 0)
-		{
-			return;
-		}
-
-		AddPlayer(playerID);
+		//multiplayer_Manager.Connect("PlayerJoined", new Callable(this, nameof(OnPlayerJoined)));
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -72,12 +46,6 @@ public partial class GameManager : Node
 
 		//PlayerSpawner.AddChild();
 		_mainScene.CallDeferred("add_child", player);
-	}
-
-	private void OnPlayerJoined(int id)
-	{
-		GD.Print("PlayerJoiend");
-		//AddPlayer(id);
 	}
 
 	public void StartGame()

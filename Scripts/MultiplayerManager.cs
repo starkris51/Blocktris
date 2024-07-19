@@ -23,28 +23,29 @@ public partial class MultiplayerManager : Node
 	{
 	}*/
 
-	public int Host()
+	public void Host()
 	{
 
 		ENetMultiplayerPeer server_peer = new();
+		GD.Print("Hosted");
 
 		var error = server_peer.CreateServer(serverPort, 2);
 		if (error != Error.Ok)
 		{
 			GD.Print("Could not host");
-			return 0;
+			return;
 		}
 
 		server_peer.Host.Compress(ENetConnection.CompressionMode.Fastlz);
 
 		Multiplayer.MultiplayerPeer = server_peer;
 		Multiplayer.MultiplayerPeer.Connect("peer_connected", new Callable(this, nameof(OnPeerConnected)));
-
-		return Multiplayer.MultiplayerPeer.GetUniqueId();
 	}
 
-	public async Task<int> Join()
+	public async void Join()
 	{
+		GD.Print("Join");
+
 		ENetMultiplayerPeer client_peer = new();
 		client_peer.CreateClient(serverIP, serverPort);
 
@@ -63,16 +64,15 @@ public partial class MultiplayerManager : Node
 			{
 				GD.Print("Connection timed out");
 				Multiplayer.MultiplayerPeer = null;
-				return 0;
+				return;
 			}
 		}
 		if (Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Connected)
 		{
 			GD.Print("Failed to connect to server");
-			return 0;
+			return;
 		}
 
-		return Multiplayer.MultiplayerPeer.GetUniqueId();
 	}
 	private void OnPeerConnected(int id)
 	{

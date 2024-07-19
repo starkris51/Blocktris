@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Blocktris"
-run/main_scene="res://Scenes/main_scene.tscn"
+run/main_scene="res://Scenes/main_menu.tscn"
 config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
 config/icon="res://Assets/textures/icon.svg"
 
@@ -26,6 +26,18 @@ window/vsync/vsync_mode=0
 [dotnet]
 
 project/assembly_name="Blocktris"
+
+[file_customization]
+
+folder_colors={
+"res://Assets/mesh libary/": "green",
+"res://Assets/models/": "red",
+"res://Assets/textures/": "teal",
+"res://Objects/": "purple",
+"res://Scenes/": "yellow",
+"res://Scripts/": "pink",
+"res://Ui/": "orange"
+}
 
 [filesystem]
 

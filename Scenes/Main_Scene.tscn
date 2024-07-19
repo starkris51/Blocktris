@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://v7msiomru4v2"]
+[gd_scene load_steps=7 format=3 uid="uid://v7msiomru4v2"]
 
 [ext_resource type="PackedScene" uid="uid://c018rdunaluox" path="res://Objects/game_manager.tscn" id="1_ajdr0"]
 [ext_resource type="Script" path="res://Scripts/FPSCounter.cs" id="2_7njbx"]
-[ext_resource type="PackedScene" uid="uid://bjq0cfcm2n2bt" path="res://Ui/MainMenu/main_menu.tscn" id="2_a5480"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yg481"]
 sky_horizon_color = Color(0.586491, 0.670454, 0.714415, 1)
@@ -38,8 +37,6 @@ near = 10.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
-
-[node name="MainMenu" parent="CanvasLayer" instance=ExtResource("2_a5480")]
 
 [node name="FpsCounter" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -77,8 +74,9 @@ grow_vertical = 0
 size_flags_horizontal = 0
 size_flags_vertical = 10
 
-[connection signal="pressed" from="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer/Host" to="GameManager" method="Host"]
-[connection signal="pressed" from="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer/Join" to="GameManager" method="Join"]
-[connection signal="pressed" from="CanvasLayer/MainMenu/Panel/MarginContainer/VBoxContainer/Join" to="GameManager" method="_on_join_pressed"]
+[node name="Players" type="Node3D" parent="."]
 
-[editable path="CanvasLayer/MainMenu"]
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Objects/player.tscn")
+spawn_path = NodePath("../Players")
+spawn_limit = 2

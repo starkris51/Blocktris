@@ -7,7 +7,10 @@
 [node name="Player" type="Node3D"]
 script = ExtResource("1_6k4dh")
 
-[node name="PlayerInputs" type="Node" parent="."]
-script = ExtResource("2_g1x7c")
-
 [node name="TetrisBoard" parent="." instance=ExtResource("3_fu3yx")]
+
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
+root_path = NodePath(".")
+script = ExtResource("2_g1x7c")

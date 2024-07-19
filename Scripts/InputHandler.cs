@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class InputHandler : Node
+public partial class InputHandler : MultiplayerSynchronizer
 {
 
 	private Board _board;
@@ -15,6 +15,10 @@ public partial class InputHandler : Node
 
 	public override void _Process(double delta)
 	{
+		if (!IsMultiplayerAuthority())
+		{
+			return;
+		}
 		if (Input.IsActionJustPressed("ui_left"))
 		{
 			_tetromino.MovePiece(-1, 0);
