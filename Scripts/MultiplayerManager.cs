@@ -10,6 +10,9 @@ public partial class MultiplayerManager : Node
 	[Export]
 	const string serverIP = "localhost";
 
+	[Signal]
+	public delegate void PlayerJoinedEventHandler(int playerId);
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -35,6 +38,7 @@ public partial class MultiplayerManager : Node
 		server_peer.Host.Compress(ENetConnection.CompressionMode.Fastlz);
 
 		Multiplayer.MultiplayerPeer = server_peer;
+		Multiplayer.MultiplayerPeer.Connect("peer_connected", new Callable(this, nameof(OnPeerConnected)));
 
 		return Multiplayer.MultiplayerPeer.GetUniqueId();
 	}
@@ -70,10 +74,9 @@ public partial class MultiplayerManager : Node
 
 		return Multiplayer.MultiplayerPeer.GetUniqueId();
 	}
-
-	public void AddPlayer(int id)
+	private void OnPeerConnected(int id)
 	{
-		GD.Print(id);
+		EmitSignal("PlayerJoined", id);
 	}
 
 }

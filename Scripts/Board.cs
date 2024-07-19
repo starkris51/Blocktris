@@ -273,7 +273,7 @@ public partial class Board : GridMap
 	{
 		_tetromino = GetNode<Tetromino>("Tetromino");
 		_player = GetParent<Player>();
-		_mainScene = _player.GetParent().GetParent<Node3D>();
+		_mainScene = _player.GetParent<Node3D>();
 		_gameManager = _mainScene.GetNode<GameManager>("GameManager");
 		_bagSystem = _gameManager.GetNode<BagSystem>("BagSystem");
 		_boardHUD = GetNode<Node3D>("BoardHUD");

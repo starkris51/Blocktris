@@ -10,7 +10,9 @@ public partial class GameManager : Node
 	private Control _MainMenu;
 	private MultiplayerManager multiplayer_Manager;
 	private Node3D _mainScene;
-	private Node3D PlayerSpawner;
+	//private Node3D PlayerSpawner;
+
+	private int offset;
 	//private CanvasLayer _canvasLayer;
 	//private List<Player> _players = new();
 
@@ -20,8 +22,8 @@ public partial class GameManager : Node
 		_bagSystem = GetNode<BagSystem>("BagSystem");
 		multiplayer_Manager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
 		_mainScene = GetParent<Node3D>();
-		PlayerSpawner = _mainScene.GetNode<Node3D>("Players");
 		//AddPlayer(1);
+		multiplayer_Manager.Connect("PlayerJoined", new Callable(this, nameof(OnPlayerJoined)));
 	}
 
 	public void Host()
@@ -68,6 +70,18 @@ public partial class GameManager : Node
 		_bagSystem.InitializePlayerBag(id);
 		//_players.Add(player);
 
-		PlayerSpawner.AddChild(player);
+		//PlayerSpawner.AddChild();
+		_mainScene.CallDeferred("add_child", player);
+	}
+
+	private void OnPlayerJoined(int id)
+	{
+		GD.Print("PlayerJoiend");
+		//AddPlayer(id);
+	}
+
+	public void StartGame()
+	{
+		GD.Print("PlayerJoined");
 	}
 }
