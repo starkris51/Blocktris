@@ -1,10 +1,13 @@
 using Godot;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 public partial class Board : GridMap
 {
+	[Signal]
+	public delegate void BoardChangedEventHandler();
 	struct Cell
 	{
 		public bool isFilled;
@@ -12,10 +15,10 @@ public partial class Board : GridMap
 		public int orientation;
 	}
 
-	private readonly Cell[,] BoardData = new Cell[10, 40];
+
+	private Cell[,] BoardData = new Cell[10, 40];
 
 	private Tetromino _tetromino;
-	private Player _player;
 	private int PlayerID;
 	private GameManager _gameManager;
 
@@ -28,6 +31,8 @@ public partial class Board : GridMap
 	private LineClearText _LineClearText;
 
 	private ComboText _ComboText;
+
+	private MultiplayerManager multiplayerManager;
 
 	private int BoardHeight = 40;
 	private int BoardWidth = 10;
@@ -245,6 +250,7 @@ public partial class Board : GridMap
 		}
 	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void StorePiece()
 	{
 		if (!CanStore)
@@ -269,11 +275,21 @@ public partial class Board : GridMap
 		UpdateUpcomingPieces();
 		CanStore = false;
 	}
+	/*public override void _EnterTree()
+	{
+		Connect(nameof(BoardChanged), new Callable(this, nameof(BoardChanged)));
+	}
+
+	public override void _ExitTree()
+	{
+		Disconnect(nameof(BoardChanged), new Callable(this, nameof(BoardChanged)));
+	}*/
 	public override void _Ready()
 	{
+		PlayerID = int.Parse(Name); ;
+
 		_tetromino = GetNode<Tetromino>("Tetromino");
-		_player = GetParent<Player>();
-		_mainScene = _player.GetParent<Node3D>();
+		_mainScene = GetParent().GetParent<Node3D>();
 		_gameManager = _mainScene.GetNode<GameManager>("GameManager");
 		_bagSystem = _gameManager.GetNode<BagSystem>("BagSystem");
 		_boardHUD = GetNode<Node3D>("BoardHUD");
@@ -281,13 +297,15 @@ public partial class Board : GridMap
 		_storeTetromino = _boardHUD.GetNode<Node3D>("StoreTetromino").GetChild<TetrominoDisplayHud>(0);
 		_LineClearText = _boardHUD.GetNode<LineClearText>("LineClearTextPlacement");
 		_ComboText = _boardHUD.GetNode<ComboText>("ComboTextPlacement");
-		PlayerID = _player.GetPlayerID();
+		multiplayerManager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
+		//GetNode<MultiplayerSynchronizer>("ServerSynchronizer").SetMultiplayerAuthority(PlayerID);
+		//GetNode<MultiplayerSynchronizer>("InputSynchronizer").SetMultiplayerAuthority(PlayerID);
 		//_bagSystem.GetPlayerBags(PlayerID);
+
 	}
-
-
-	/*public override void _Process(double delta)
+	public override void _Process(double delta)
 	{
 
-	}*/
+	}
+
 }

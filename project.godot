@@ -30,6 +30,7 @@ project/assembly_name="Blocktris"
 [file_customization]
 
 folder_colors={
+"res://Assets/": "gray",
 "res://Assets/mesh libary/": "green",
 "res://Assets/models/": "red",
 "res://Assets/textures/": "teal",

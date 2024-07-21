@@ -24,6 +24,8 @@ public partial class Tetromino : GridMap
 	}
 
 	private Board _board;
+	private MultiplayerManager multiplayerManager;
+
 
 	private readonly int[,,,] TetrominoData = new int[7, 4, 4, 4]
 	{
@@ -256,7 +258,6 @@ public partial class Tetromino : GridMap
 	public TSpinType currentTSpin;
 
 	TetrisPiece currentPiece;
-
 	public void UpdatePiece()
 	{
 		Clear();
@@ -327,6 +328,7 @@ public partial class Tetromino : GridMap
 		return y;
 	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void RotatePiece(bool clockwise)
 	{
 		int oldrotationstate = rotationState;
@@ -376,8 +378,11 @@ public partial class Tetromino : GridMap
 		UpdatePiece();
 	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void MovePiece(int dx, int dy)
 	{
+		currentTSpin = TSpinType.None;
+
 		if (!canUseTetromino)
 		{
 			return;
@@ -498,6 +503,7 @@ public partial class Tetromino : GridMap
 		return TSpinType.None;
 	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void HardDrop()
 	{
 		while (!_board.CheckCollision())
@@ -531,6 +537,7 @@ public partial class Tetromino : GridMap
 	{
 		_board = GetParent<Board>();
 		GhostLight = GetChild<OmniLight3D>(0);
+		multiplayerManager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
 	}
 
 

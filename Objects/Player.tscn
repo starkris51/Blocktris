@@ -1,16 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dsel034hjma1u"]
+[gd_scene load_steps=3 format=3 uid="uid://c7oonwuvf4ddm"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_6k4dh"]
-[ext_resource type="Script" path="res://Scripts/InputHandler.cs" id="2_g1x7c"]
 [ext_resource type="PackedScene" uid="uid://bq4hfvv0iq1ry" path="res://Objects/board.tscn" id="3_fu3yx"]
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_6k4dh")
 
 [node name="TetrisBoard" parent="." instance=ExtResource("3_fu3yx")]
-
-[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-
-[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
-root_path = NodePath(".")
-script = ExtResource("2_g1x7c")

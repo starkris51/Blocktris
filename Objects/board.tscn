@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bq4hfvv0iq1ry"]
+[gd_scene load_steps=12 format=3 uid="uid://bq4hfvv0iq1ry"]
 
 [ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_0p03k"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="2_amddx"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://1dajnn7sutgq" path="res://Objects/tetromino_display_hud.tscn" id="4_coyhh"]
 [ext_resource type="PackedScene" uid="uid://dkfqi76aj7f2x" path="res://Objects/line_clear_text_placement.tscn" id="5_ph725"]
 [ext_resource type="PackedScene" uid="uid://c5kwybaj2lglw" path="res://Objects/combo_text_placement.tscn" id="6_jhclj"]
+[ext_resource type="Script" path="res://Scripts/InputHandler.cs" id="8_eollq"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_pk2os"]
 
@@ -14,6 +15,8 @@
 transparency = 1
 albedo_color = Color(0.517647, 0.517647, 0.517647, 0.301961)
 metallic = 0.54
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_h2ilg"]
 
 [node name="TetrisBoard" type="GridMap"]
 mesh_library = ExtResource("1_0p03k")
@@ -73,3 +76,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 18, 0)
 
 [node name="PieceDisplay" parent="BoardHUD/StoreTetromino" instance=ExtResource("4_coyhh")]
+
+[node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_h2ilg")
+script = ExtResource("8_eollq")
