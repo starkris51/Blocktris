@@ -3,11 +3,12 @@ using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class Board : GridMap
 {
 	[Signal]
-	public delegate void BoardChangedEventHandler();
+	public delegate void GameStartedEventHandler();
 	struct Cell
 	{
 		public bool isFilled;
@@ -67,13 +68,38 @@ public partial class Board : GridMap
 			}
 		}
 
+		EmitSignal(nameof(GameStarted));
+
 		UpdateBoard();
-
 		Combo = 0;
-
-		_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
-		UpdateUpcomingPieces();
+		RequestNextPiece();
 	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RequestNextPiece()
+	{
+		if (Multiplayer.IsServer())
+		{
+			// Server-side logic
+			int nextPiece = _bagSystem.GetNextPiece(PlayerID);
+			Rpc(nameof(HandleNextPiece), nextPiece);
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void HandleNextPiece(int nextPiece)
+	{
+		if (nextPiece != -1) // Check for valid piece
+		{
+			_tetromino.NewPiece(nextPiece);
+			UpdateUpcomingPieces();
+		}
+		else
+		{
+			GD.PrintErr("Failed to get next piece. The bag may not have been properly refilled.");
+		}
+	}
+
 
 	public bool CheckCollision()
 	{
@@ -219,8 +245,9 @@ public partial class Board : GridMap
 
 		CheckLines();
 		UpdateBoard();
-		_tetromino.NewPiece(_bagSystem.GetNextPiece(PlayerID));
 		CanStore = true;
+
+		RequestNextPiece();
 		UpdateUpcomingPieces();
 	}
 
@@ -240,7 +267,7 @@ public partial class Board : GridMap
 
 	public void UpdateUpcomingPieces()
 	{
-		List<int> PlayerBag = _bagSystem.GetUpcomingPieces(PlayerID, 5);
+		Godot.Collections.Array<int> PlayerBag = _bagSystem.GetUpcomingPieces(PlayerID, 5);
 		int index = 0;
 
 		foreach (Node3D PieceDisplay in _upcomingPieces.GetChildren().Cast<Node3D>())

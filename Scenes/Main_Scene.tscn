@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://v7msiomru4v2"]
+[gd_scene load_steps=6 format=3 uid="uid://v7msiomru4v2"]
 
 [ext_resource type="PackedScene" uid="uid://c018rdunaluox" path="res://Objects/game_manager.tscn" id="1_ajdr0"]
-[ext_resource type="Script" path="res://Scripts/FPSCounter.cs" id="2_7njbx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yg481"]
 sky_horizon_color = Color(0.586491, 0.670454, 0.714415, 1)
@@ -16,7 +15,7 @@ sky_material = SubResource("ProceduralSkyMaterial_yg481")
 background_mode = 2
 background_intensity = 33157.9
 sky = SubResource("Sky_ycm83")
-tonemap_mode = 2
+tonemap_mode = 3
 glow_intensity = 2.65
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_vw4rr"]
@@ -29,9 +28,10 @@ environment = SubResource("Environment_jpuga")
 camera_attributes = SubResource("CameraAttributesPractical_vw4rr")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17618, 10.2593, 30.5524)
-fov = 60.0
-near = 10.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17618, 10.2593, 31.8312)
+fov = 50.0
+size = 22.904
+near = 0.001
 
 [node name="GameManager" parent="." instance=ExtResource("1_ajdr0")]
 
@@ -43,14 +43,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-
-[node name="FPSCounter" type="Label" parent="CanvasLayer/FpsCounter"]
-layout_mode = 0
-offset_right = 162.0
-offset_bottom = 76.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
-script = ExtResource("2_7njbx")
 
 [node name="ChatBox" type="Control" parent="CanvasLayer"]
 layout_mode = 3

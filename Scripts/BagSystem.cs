@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public partial class BagSystem : Node
 {
+
 	private List<int> sharedBag = new();
-	private readonly Dictionary<int, Queue<int>> playerBags = new();
-	private readonly Dictionary<int, int> playerIndices = new();
+	private Godot.Collections.Dictionary<int, Godot.Collections.Array<int>> playerBags = new();
+	private Godot.Collections.Dictionary<int, int> playerIndices = new();
 	private readonly Random random = new();
 
 	public void ResetBag()
@@ -18,37 +19,67 @@ public partial class BagSystem : Node
 	{
 		if (!playerBags.ContainsKey(playerId))
 		{
-			playerBags[playerId] = new Queue<int>();
+			playerBags[playerId] = new Godot.Collections.Array<int>();
 			playerIndices[playerId] = 0;
 			RefillPlayerBag(playerId);
 		}
 	}
 
-	public Queue<int> GetPlayerBags(int playerId)
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void SyncAllBags(Godot.Collections.Dictionary<int, Godot.Collections.Array<int>> newBags, Godot.Collections.Dictionary<int, int> newIndices)
 	{
-		return playerBags[playerId];
+		playerBags = newBags;
+		playerIndices = newIndices;
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
+	private void BroadcastBags()
+	{
+		foreach (int id in Multiplayer.GetPeers())
+		{
+			RpcId(id, nameof(SyncAllBags), playerBags, playerIndices);
+		}
+	}
+
+	public Godot.Collections.Array<int> GetPlayerBags(int playerId)
+	{
+		return playerBags.ContainsKey(playerId) ? playerBags[playerId] : new Godot.Collections.Array<int>();
 	}
 
 	public int GetNextPiece(int playerId)
 	{
-		Queue<int> playerBag = playerBags[playerId];
+		Godot.Collections.Array<int> playerBag = playerBags[playerId];
+
+		// Refill the player bag if needed
 		if (playerBag.Count < 7)
 		{
 			RefillPlayerBag(playerId);
 		}
 
-		return playerBag.Dequeue();
+		int nextPiece = playerBag[0];
+		playerBag.RemoveAt(0);
+
+		BroadcastBags();
+
+		return nextPiece;
 	}
 
-	public List<int> GetUpcomingPieces(int playerId, int count)
+	public Godot.Collections.Array<int> GetUpcomingPieces(int playerId, int count)
 	{
-		Queue<int> playerBag = playerBags[playerId];
-		return new List<int>(playerBag).GetRange(0, Math.Min(count, playerBag.Count));
+		Godot.Collections.Array<int> playerBag = GetPlayerBags(playerId);
+		Godot.Collections.Array<int> upcomingPieces = new();
+
+		for (int i = 0; i < Math.Min(count, playerBag.Count); i++)
+		{
+			upcomingPieces.Add(playerBag[i]);
+		}
+
+		return upcomingPieces;
 	}
 
 	private void RefillPlayerBag(int playerId)
 	{
-		Queue<int> playerBag = playerBags[playerId];
+		Godot.Collections.Array<int> playerBag = playerBags[playerId];
 		int bagCount = sharedBag.Count;
 		int playerIndex = playerIndices[playerId];
 
@@ -57,13 +88,16 @@ public partial class BagSystem : Node
 			if (playerIndex >= bagCount)
 			{
 				sharedBag.AddRange(GenerateNewBag());
+				bagCount = sharedBag.Count;
 			}
 
-			playerBag.Enqueue(sharedBag[playerIndex]);
+			playerBag.Add(sharedBag[playerIndex]);
 			playerIndex++;
 		}
 
 		playerIndices[playerId] = playerIndex;
+		BroadcastBags();
+
 	}
 
 	private List<int> GenerateNewBag()
@@ -80,6 +114,4 @@ public partial class BagSystem : Node
 
 		return bag;
 	}
-
 }
-

@@ -80,3 +80,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 18, 0)
 [node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_h2ilg")
 script = ExtResource("8_eollq")
+
+[node name="PieceFallTimer" type="Timer" parent="InputSynchronizer"]
+
+[node name="DelayAutoShiftTimer" type="Timer" parent="InputSynchronizer"]

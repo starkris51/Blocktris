@@ -13,7 +13,7 @@ public partial class GameManager : Node
 	private Node3D _mainScene;
 	private Node3D PlayerSpawner;
 
-	private int offset = -10;
+	private int offset = -15;
 	//private CanvasLayer _canvasLayer;
 	//private List<Player> _players = new();
 
@@ -22,6 +22,7 @@ public partial class GameManager : Node
 	{
 		_bagSystem = GetNode<BagSystem>("BagSystem");
 		multiplayer_Manager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
+		multiplayer_Manager.StopGame += QuitGame;
 		_mainScene = GetParent<Node3D>();
 		PlayerSpawner = _mainScene.GetNode<Node3D>("Players");
 
@@ -31,6 +32,21 @@ public partial class GameManager : Node
 		}
 	}
 
+
+	public void QuitGame()
+	{
+		GD.Print("Game is stopping...");
+
+		// Ensure all player nodes are removed safely
+		if (PlayerSpawner != null && PlayerSpawner.IsInsideTree())
+		{
+			PlayerSpawner.CallDeferred("queue_free");
+		}
+
+		// Handle scene change with deferred call to avoid timing issues
+		GetTree().CallDeferred("change_scene_to_packed", ResourceLoader.Load<PackedScene>("res://Scenes/main_menu.tscn"));
+	}
+
 	public void AddPlayer(int id, string _)
 	{
 		PackedScene BoardScene = ResourceLoader.Load<PackedScene>("res://Objects/board.tscn");
@@ -38,7 +54,7 @@ public partial class GameManager : Node
 		Board.Name = id.ToString();
 		_bagSystem.InitializePlayerBag(id);
 		Board.Position += new Vector3(offset, 0, 0);
-		offset += 20;
+		offset += 25;
 		PlayerSpawner.CallDeferred("add_child", Board);
 		Board.CallDeferred("NewGame");
 	}

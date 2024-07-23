@@ -3,36 +3,18 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 public partial class MultiplayerManager : Node
 {
+	[Export] const int serverPort = 8080;
+	[Export] const string serverIP = "localhost";
 
-	[Export]
-	const int serverPort = 8080;
-	[Export]
-	const string serverIP = "localhost";
+	[Signal] public delegate void UpdateLobbyEventHandler(int playerId);
+	[Signal] public delegate void ConnectionEstablishedEventHandler();
+	[Signal] public delegate void PlayerDisconnectedEventHandler(int playerId);
+	[Signal] public delegate void HostDisconnectedEventHandler();
+	[Signal] public delegate void LobbyStartGameEventHandler();
+	[Signal] public delegate void StopGameEventHandler();
 
-	[Signal]
-	public delegate void UpdateLobbyEventHandler(int playerId);
-
-	[Signal]
-	public delegate void ConnectionEstablishedEventHandler();
-
-	[Signal]
-	public delegate void PlayerDisconnectedEventHandler(int playerId);
-
-	[Signal]
-	public delegate void HostDisconnectedEventHandler();
-
-	[Signal]
-	public delegate void LobbyStartGameEventHandler();
-
-	[Signal]
-	public delegate void StopGameEventHandler();
-
-
-	/*[Signal]
-	public delegate void PlayerNameSyncedEventHandler();*/
 	public enum GameState
 	{
 		Lobby = 0,
@@ -42,53 +24,41 @@ public partial class MultiplayerManager : Node
 	public Godot.Collections.Dictionary<int, string> playerNames = new();
 	public GameState CurrentGameState { get; private set; } = GameState.Lobby;
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		//Multiplayer.PeerConnected += OnPeerConnected;
 		Multiplayer.PeerDisconnected += OnPeerDisconnected;
 		Multiplayer.ServerDisconnected += OnHostDisconnected;
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	/*public override void _Process(double delta)
-	{
-	}*/
-
 	public void Host(string playerName)
 	{
+		GD.Print("Hosting game");
 
-		ENetMultiplayerPeer server_peer = new();
-		GD.Print("Hosted");
-
-		var error = server_peer.CreateServer(serverPort, 2);
+		ENetMultiplayerPeer serverPeer = new();
+		var error = serverPeer.CreateServer(serverPort, 2);
 		if (error != Error.Ok)
 		{
 			GD.Print("Could not host");
 			return;
 		}
 
-		server_peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-
-		Multiplayer.MultiplayerPeer = server_peer;
+		serverPeer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+		Multiplayer.MultiplayerPeer = serverPeer;
 
 		CurrentGameState = GameState.Lobby;
 		LocalSetPlayerName(Multiplayer.GetUniqueId(), playerName);
-
 		EmitSignal("ConnectionEstablished");
 	}
 
 	public async void Join(string playerName)
 	{
-		GD.Print("Join");
+		GD.Print("Joining game");
 
-		ENetMultiplayerPeer client_peer = new();
-		client_peer.CreateClient(serverIP, serverPort);
+		ENetMultiplayerPeer clientPeer = new();
+		clientPeer.CreateClient(serverIP, serverPort);
+		clientPeer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 
-		client_peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-
-		Multiplayer.MultiplayerPeer = client_peer;
-		//Multiplayer.MultiplayerPeer.Connect("peer_connected", new Callable(this, nameof(OnPeerConnected)));
+		Multiplayer.MultiplayerPeer = clientPeer;
 
 		int timeout = 5000; // 5 seconds timeout
 		int elapsed = 0;
@@ -111,14 +81,12 @@ public partial class MultiplayerManager : Node
 		}
 
 		RpcId(1, nameof(RemoteSetPlayerName), Multiplayer.GetUniqueId(), playerName);
-
 		EmitSignal("ConnectionEstablished");
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.Authority)]
 	private void BroadcastExistingPlayers()
 	{
-		GD.Print(Multiplayer.GetPeers().Stringify());
 		foreach (var id in Multiplayer.GetPeers())
 		{
 			RpcId(id, nameof(SyncPlayerName), playerNames);
@@ -172,12 +140,27 @@ public partial class MultiplayerManager : Node
 			EmitSignal(nameof(UpdateLobby));
 		}
 
-
+		EmitSignal(nameof(StopGame));
 	}
 
 	public void OnHostDisconnected()
 	{
+		GD.Print("Host disconnected");
+
+		// Clear player names and reset game state
+		playerNames.Clear();
+		CurrentGameState = GameState.Lobby;
+
+		// Cleanup server peer if necessary
+		if (Multiplayer.IsServer())
+		{
+			EmitSignal(nameof(StopGame));
+			// Cleanup server peer
+			Multiplayer.MultiplayerPeer?.CallDeferred("queue_free");
+			Multiplayer.MultiplayerPeer = null;
+		}
 		EmitSignal(nameof(HostDisconnected));
+		EmitSignal(nameof(StopGame));
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -191,5 +174,4 @@ public partial class MultiplayerManager : Node
 	{
 		return playerNames.ContainsKey(playerId) ? playerNames[playerId] : "Unknown";
 	}
-
 }
