@@ -252,6 +252,51 @@ public partial class Board : GridMap
 		CanStore = true;
 		RequestNextPiece();
 		UpdateUpcomingPieces();
+
+		Rpc(nameof(SyncBoard), ConvertBoardToVariant());
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void SyncBoard(Godot.Collections.Array boardArray)
+	{
+		ConvertVariantToBoard(boardArray);
+		UpdateBoard();
+	}
+
+	private Godot.Collections.Array ConvertBoardToVariant()
+	{
+		var boardArray = new Godot.Collections.Array();
+		for (int i = 0; i < BoardWidth; i++)
+		{
+			var column = new Godot.Collections.Array();
+			for (int j = 0; j < BoardHeight; j++)
+			{
+				var cell = new Godot.Collections.Dictionary
+			{
+				{ "isFilled", BoardData[i, j].isFilled },
+				{ "item", BoardData[i, j].item },
+				{ "orientation", BoardData[i, j].orientation }
+			};
+				column.Add(cell);
+			}
+			boardArray.Add(column);
+		}
+		return boardArray;
+	}
+
+	private void ConvertVariantToBoard(Godot.Collections.Array boardArray)
+	{
+		for (int i = 0; i < BoardWidth; i++)
+		{
+			var column = (Godot.Collections.Array)boardArray[i];
+			for (int j = 0; j < BoardHeight; j++)
+			{
+				var cell = (Godot.Collections.Dictionary)column[j];
+				BoardData[i, j].isFilled = (bool)cell["isFilled"];
+				BoardData[i, j].item = (int)cell["item"];
+				BoardData[i, j].orientation = (int)cell["orientation"];
+			}
+		}
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
