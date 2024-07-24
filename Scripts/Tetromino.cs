@@ -25,6 +25,8 @@ public partial class Tetromino : GridMap
 
 	private Board _board;
 	private MultiplayerManager multiplayerManager;
+	private Timer PlaceDelay;
+	private bool isPlacedDelayActive = false;
 
 
 	private readonly int[,,,] TetrominoData = new int[7, 4, 4, 4]
@@ -379,9 +381,20 @@ public partial class Tetromino : GridMap
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void UpdatePieceState(int newX, int newY, int newRotationState, int newPiece, int TSpinType)
+	{
+		x = newX;
+		y = newY;
+		rotationState = newRotationState;
+		currentTSpin = (TSpinType)TSpinType;
+		currentPiece = (TetrisPiece)newPiece;
+		UpdatePiece();
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void MovePiece(int dx, int dy)
 	{
-		currentTSpin = TSpinType.None;
+		//currentTSpin = TSpinType.None;
 
 		if (!canUseTetromino)
 		{
@@ -396,9 +409,16 @@ public partial class Tetromino : GridMap
 			x -= dx;
 			y -= dy;
 
-			if (dy < 0)
+			if (dy < 0 && !isPlacedDelayActive)
+			{
+				PlaceDelay.WaitTime = 0.5f;
+				PlaceDelay.Start();
+				isPlacedDelayActive = true;
+			}
+			else if (dy < 0 && isPlacedDelayActive && PlaceDelay.IsStopped())
 			{
 				_board.PlacePiece((int)currentPiece);
+				isPlacedDelayActive = false;
 			}
 		}
 		else
@@ -538,6 +558,9 @@ public partial class Tetromino : GridMap
 		_board = GetParent<Board>();
 		GhostLight = GetChild<OmniLight3D>(0);
 		multiplayerManager = GetNode<MultiplayerManager>("/root/MultiplayerManager");
+		PlaceDelay = GetNode<Timer>("PlaceDelay");
+		PlaceDelay.SetMultiplayerAuthority(int.Parse(_board.Name));
+		PlaceDelay.OneShot = true;
 	}
 
 

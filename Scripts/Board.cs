@@ -45,6 +45,8 @@ public partial class Board : GridMap
 	private bool IsBackToBack = false;
 	private bool CanStore = true;
 
+	private int currentlyTargetingPlayer;
+
 	public void UpdateBoard()
 	{
 		for (int i = 0; i < BoardData.GetLength(0); i++)
@@ -78,7 +80,7 @@ public partial class Board : GridMap
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	private void RequestNextPiece()
 	{
-		if (Multiplayer.IsServer())
+		if (multiplayerManager.Multiplayer.IsServer())
 		{
 			// Server-side logic
 			int nextPiece = _bagSystem.GetNextPiece(PlayerID);
@@ -208,6 +210,8 @@ public partial class Board : GridMap
 			IsCombo = false;
 			Combo = 0;
 		}
+
+		//RpcId(currentlyTargetingPlayer, nameof(AttackPlayer), currentlyTargetingPlayer, rowsCleared);
 	}
 
 	public bool IsOccupied(int x, int y)
@@ -220,7 +224,7 @@ public partial class Board : GridMap
 		return BoardData[x, y].isFilled;
 	}
 
-	public void PlacePiece(int item)
+	public void PlacePiece(int piece)
 	{
 		int[,] matrix = _tetromino.GetMatrix();
 		int x = _tetromino.GetX();
@@ -237,7 +241,7 @@ public partial class Board : GridMap
 
 					if (boardX >= 0 && boardX < BoardWidth && boardY >= 0 && boardY < BoardHeight)
 					{
-						BoardData[boardX, boardY] = new Cell { isFilled = true, item = item, orientation = 4 };
+						BoardData[boardX, boardY] = new Cell { isFilled = true, item = piece, orientation = 4 };
 					}
 				}
 			}
@@ -246,24 +250,51 @@ public partial class Board : GridMap
 		CheckLines();
 		UpdateBoard();
 		CanStore = true;
-
 		RequestNextPiece();
 		UpdateUpcomingPieces();
 	}
 
-	/*public void SendGarbage(int Amount)
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void AttackPlayer(int Id, int amount)
 	{
-		for (int i = 1; i < Amount; i++)
+		foreach (Board Player in GetParent().GetChildren().Cast<Board>())
 		{
-
-			for (int j = 0; j < BoardData.GetLength(0); j++)
+			if (Player.Name == Id.ToString())
 			{
-				BoardData[j, i - 1] = new Cell {isFilled = true};
-				BoardData[j, i] = BoardData[j, i + 1];
+				Player.CallDeferred("SendGarbage", amount);
+			}
+		}
+	}
+
+	public void SendGarbage(int amount)
+	{
+		Random random = new();
+		for (int i = 0; i < amount; i++)
+		{
+			int openColumn = random.Next(BoardWidth);
+
+			for (int y = 0; y < BoardHeight - 1; y++)
+			{
+				for (int x = 0; x < BoardWidth; x++)
+				{
+					BoardData[x, y] = BoardData[x, y + 1];
+				}
 			}
 
+			for (int x = 0; x < BoardWidth; x++)
+			{
+				if (x == openColumn)
+				{
+					BoardData[x, BoardHeight - 1] = new Cell { isFilled = false, item = -1, orientation = 4 };
+				}
+				else
+				{
+					BoardData[x, BoardHeight - 1] = new Cell { isFilled = true, item = 8, orientation = 4 };
+				}
+			}
 		}
-	}*/
+		UpdateBoard();
+	}
 
 	public void UpdateUpcomingPieces()
 	{
@@ -311,6 +342,17 @@ public partial class Board : GridMap
 	{
 		Disconnect(nameof(BoardChanged), new Callable(this, nameof(BoardChanged)));
 	}*/
+
+	public void SetPlayerName(string name)
+	{
+		_boardHUD.GetNode<Label3D>("PlayerName").Text = name;
+	}
+
+	public void SetTargetingPlayer(int Target)
+	{
+		currentlyTargetingPlayer = Target;
+	}
+
 	public override void _Ready()
 	{
 		PlayerID = int.Parse(Name); ;

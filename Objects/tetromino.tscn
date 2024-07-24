@@ -15,3 +15,5 @@ shadow_enabled = true
 shadow_blur = 0.0
 distance_fade_enabled = true
 omni_range = 11.1056
+
+[node name="PlaceDelay" type="Timer" parent="."]

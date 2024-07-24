@@ -13,9 +13,9 @@ sky_material = SubResource("ProceduralSkyMaterial_yg481")
 
 [sub_resource type="Environment" id="Environment_jpuga"]
 background_mode = 2
-background_intensity = 33157.9
+background_intensity = 24736.8
 sky = SubResource("Sky_ycm83")
-tonemap_mode = 3
+tonemap_mode = 2
 glow_intensity = 2.65
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_vw4rr"]

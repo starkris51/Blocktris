@@ -13,7 +13,7 @@ public partial class GameManager : Node
 	private Node3D _mainScene;
 	private Node3D PlayerSpawner;
 
-	private int offset = -15;
+	private int offset = -12;
 	//private CanvasLayer _canvasLayer;
 	//private List<Player> _players = new();
 
@@ -47,15 +47,17 @@ public partial class GameManager : Node
 		GetTree().CallDeferred("change_scene_to_packed", ResourceLoader.Load<PackedScene>("res://Scenes/main_menu.tscn"));
 	}
 
-	public void AddPlayer(int id, string _)
+	public void AddPlayer(int id, string playername)
 	{
 		PackedScene BoardScene = ResourceLoader.Load<PackedScene>("res://Objects/board.tscn");
 		Board Board = BoardScene.Instantiate<Board>();
 		Board.Name = id.ToString();
 		_bagSystem.InitializePlayerBag(id);
 		Board.Position += new Vector3(offset, 0, 0);
-		offset += 25;
+		offset += 20;
 		PlayerSpawner.CallDeferred("add_child", Board);
+		Board.CallDeferred("SetPlayerName", playername);
+		Board.CallDeferred("SetTargetingPlayer", multiplayer_Manager.Multiplayer.GetPeers()[0]);
 		Board.CallDeferred("NewGame");
 	}
 }
