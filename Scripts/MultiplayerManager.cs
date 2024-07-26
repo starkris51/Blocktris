@@ -35,14 +35,14 @@ public partial class MultiplayerManager : Node
 		GD.Print("Hosting game");
 
 		ENetMultiplayerPeer serverPeer = new();
-		var error = serverPeer.CreateServer(serverPort, 2);
+		var error = serverPeer.CreateServer(serverPort, 5);
 		if (error != Error.Ok)
 		{
 			GD.Print("Could not host");
 			return;
 		}
 
-		serverPeer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+		serverPeer.Host.Compress(ENetConnection.CompressionMode.Fastlz);
 		Multiplayer.MultiplayerPeer = serverPeer;
 
 		CurrentGameState = GameState.Lobby;
@@ -56,7 +56,7 @@ public partial class MultiplayerManager : Node
 
 		ENetMultiplayerPeer clientPeer = new();
 		clientPeer.CreateClient(serverIP, serverPort);
-		clientPeer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+		clientPeer.Host.Compress(ENetConnection.CompressionMode.Fastlz);
 
 		Multiplayer.MultiplayerPeer = clientPeer;
 
@@ -156,8 +156,7 @@ public partial class MultiplayerManager : Node
 		{
 			EmitSignal(nameof(StopGame));
 			// Cleanup server peer
-			Multiplayer.MultiplayerPeer?.CallDeferred("queue_free");
-			Multiplayer.MultiplayerPeer = null;
+			Multiplayer.MultiplayerPeer.DisconnectPeer(1);
 		}
 		EmitSignal(nameof(HostDisconnected));
 		EmitSignal(nameof(StopGame));
@@ -178,12 +177,6 @@ public partial class MultiplayerManager : Node
 			playerNames.Clear();
 			CurrentGameState = GameState.Lobby;
 
-			if (Multiplayer.MultiplayerPeer != null)
-			{
-				Multiplayer.MultiplayerPeer.DisconnectPeer(0);
-				Multiplayer.MultiplayerPeer = null;
-			}
-
 			EmitSignal(nameof(StopGame));
 		}
 	}
@@ -194,12 +187,6 @@ public partial class MultiplayerManager : Node
 		GD.Print("Client disconnecting...");
 		playerNames.Clear();
 		CurrentGameState = GameState.Lobby;
-
-		if (Multiplayer.MultiplayerPeer != null)
-		{
-			Multiplayer.MultiplayerPeer.DisconnectPeer(0);
-			Multiplayer.MultiplayerPeer = null;
-		}
 
 		EmitSignal(nameof(StopGame));
 	}

@@ -53,7 +53,18 @@ public partial class GameManager : Node
 			{
 				RpcId(id, nameof(QuitGame));
 			}
+			multiplayer_Manager.DisconnectAll();
 			QuitGame();
+
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void RequestPlayerBag(int id)
+	{
+		if (multiplayer_Manager.Multiplayer.IsServer())
+		{
+			_bagSystem.InitializePlayerBag(id);
 		}
 	}
 
@@ -62,7 +73,8 @@ public partial class GameManager : Node
 		PackedScene BoardScene = ResourceLoader.Load<PackedScene>("res://Objects/board.tscn");
 		Board Board = BoardScene.Instantiate<Board>();
 		Board.Name = id.ToString();
-		_bagSystem.InitializePlayerBag(id);
+		//_bagSystem.InitializePlayerBag(id);
+		Rpc(nameof(RequestPlayerBag), id);
 		Board.Position += new Vector3(offset, 0, 0);
 		offset += 30;
 		PlayerSpawner.CallDeferred("add_child", Board);

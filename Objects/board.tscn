@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://bq4hfvv0iq1ry"]
+[gd_scene load_steps=11 format=3 uid="uid://bq4hfvv0iq1ry"]
 
 [ext_resource type="MeshLibrary" uid="uid://wynt6eowcals" path="res://Assets/mesh libary/DefaultTetrominoMeshLibary.tres" id="1_0p03k"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="2_amddx"]
 [ext_resource type="PackedScene" uid="uid://c3kcscecpy3xw" path="res://Objects/tetromino.tscn" id="3_5fs2h"]
-[ext_resource type="PackedScene" uid="uid://ppc3n7g3672d" path="res://Objects/garbage_display.tscn" id="3_eb7gt"]
 [ext_resource type="PackedScene" uid="uid://1dajnn7sutgq" path="res://Objects/tetromino_display_hud.tscn" id="4_coyhh"]
 [ext_resource type="PackedScene" uid="uid://dkfqi76aj7f2x" path="res://Objects/line_clear_text_placement.tscn" id="5_ph725"]
 [ext_resource type="PackedScene" uid="uid://c5kwybaj2lglw" path="res://Objects/combo_text_placement.tscn" id="6_jhclj"]
@@ -23,27 +22,25 @@ mesh_library = ExtResource("1_0p03k")
 cell_size = Vector3(1, 1, 1)
 cell_scale = 0.5
 data = {
-"cells": PackedInt32Array(10, 0, 1376264, 65546, 0, 1376264, 131082, 0, 1376264, 196618, 0, 1376264, 262154, 0, 1376264, 327690, 0, 1376264, 393226, 0, 1376264, 458762, 0, 1376264, 524298, 0, 1376264, 589834, 0, 1376264, 655370, 0, 1376264, 720906, 0, 1376264, 786442, 0, 1376264, 851978, 0, 1376264, 917514, 0, 1376264, 983050, 0, 1376264, 1048586, 0, 1376264, 1114122, 0, 1376264, 1179658, 0, 1376264, 1245194, 0, 1376264, 65535, 0, 1507336, 131071, 0, 1507336, 196607, 0, 1507336, 262143, 0, 1507336, 327679, 0, 1507336, 458751, 0, 1507336, 524287, 0, 1507336, 589823, 0, 1507336, 655359, 0, 1507336, 720895, 0, 1507336, 786431, 0, 1507336, 851967, 0, 1507336, 917503, 0, 1507336, 983039, 0, 1507336, 1048575, 0, 1507336, 1114111, 0, 1507336, 1179647, 0, 1507336, 1245183, 0, 1507336, 1310719, 0, 1507336, -65536, 0, 131080, -65535, 0, 131080, -65534, 0, 131080, -65533, 0, 131080, -65532, 0, 131080, -65531, 0, 131080, -65530, 0, 131080, -65529, 0, 131080, -65528, 0, 131080, -65527, 0, 131080, 393215, 0, 1507336)
+"cells": PackedInt32Array(10, 0, 1376264, 65546, 0, 1376264, 131082, 0, 1376264, 196618, 0, 1376264, 262154, 0, 1376264, 327690, 0, 1376264, 393226, 0, 1376264, 458762, 0, 1376264, 524298, 0, 1376264, 589834, 0, 1376264, 655370, 0, 1376264, 720906, 0, 1376264, 786442, 0, 1376264, 851978, 0, 1376264, 917514, 0, 1376264, 983050, 0, 1376264, 1048586, 0, 1376264, 1114122, 0, 1376264, 1179658, 0, 1376264, 1245194, 0, 1376264, 524287, 0, 1507336, 589823, 0, 1507336, 655359, 0, 1507336, 720895, 0, 1507336, 786431, 0, 1507336, 851967, 0, 1507336, 917503, 0, 1507336, 983039, 0, 1507336, 1048575, 0, 1507336, 1114111, 0, 1507336, 1179647, 0, 1507336, 1245183, 0, 1507336, 1310719, 0, 1507336, -65536, 0, 131080, -65535, 0, 131080, -65534, 0, 131080, -65533, 0, 131080, -65532, 0, 131080, -65531, 0, 131080, -65530, 0, 131080, -65529, 0, 131080, -65528, 0, 131080, -65527, 0, 131080, 131071, 0, 1507336, 65535, 0, 1507336, 262143, 0, 1507336, 196607, 0, 1507336, 458751, 0, 1507336, 393215, 0, 1507336, 327679, 0, 1507336)
 }
 script = ExtResource("2_amddx")
-metadata/_editor_floor_ = Vector3(0, 0, 0)
-
-[node name="GarbageDisplay" parent="." instance=ExtResource("3_eb7gt")]
+metadata/_editor_floor_ = Vector3(0, 0, -2)
 
 [node name="Tetromino" parent="." instance=ExtResource("3_5fs2h")]
 
 [node name="BoardBackground" type="MeshInstance3D" parent="."]
-transform = Transform3D(11, 0, 0, 0, 20, 0, 0, 0, 0.05, 4.5, 10, -0.025)
+transform = Transform3D(9.96828, 0, 0, 0, 20, 0, 0, 0, 0.05, 5.04371, 10.0933, 0.0835434)
 mesh = SubResource("BoxMesh_pk2os")
 surface_material_override/0 = SubResource("StandardMaterial3D_2a0bq")
 
 [node name="BoardHUD" type="Node3D" parent="."]
 
 [node name="LineClearTextPlacement" parent="BoardHUD" instance=ExtResource("5_ph725")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75828, 15, 0.00421906)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75828, 15, 0.00421906)
 
 [node name="ComboTextPlacement" parent="BoardHUD" instance=ExtResource("6_jhclj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 11, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 11, 0)
 
 [node name="UpcomingPieces" type="Node3D" parent="BoardHUD"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 18, 0)
@@ -73,7 +70,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
 [node name="PieceDisplay" parent="BoardHUD/UpcomingPieces/PieceDisplay5" instance=ExtResource("4_coyhh")]
 
 [node name="StoreTetromino" type="Node3D" parent="BoardHUD"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 18, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 18, 0)
 
 [node name="PieceDisplay" parent="BoardHUD/StoreTetromino" instance=ExtResource("4_coyhh")]
 

@@ -116,15 +116,8 @@ public partial class Board : GridMap
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	private void HandleNextPiece(int nextPiece)
 	{
-		if (nextPiece != -1) // Check for valid piece
-		{
-			_tetromino.NewPiece(nextPiece);
-			UpdateUpcomingPieces();
-		}
-		else
-		{
-			GD.PrintErr("Failed to get next piece. The bag may not have been properly refilled.");
-		}
+		_tetromino.NewPiece(nextPiece);
+		UpdateUpcomingPieces();
 	}
 
 

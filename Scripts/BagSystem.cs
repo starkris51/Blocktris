@@ -25,7 +25,7 @@ public partial class BagSystem : Node
 		}
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
 	private void SyncAllBags(Godot.Collections.Dictionary<int, Godot.Collections.Array<int>> newBags, Godot.Collections.Dictionary<int, int> newIndices)
 	{
 		playerBags = newBags;
@@ -97,7 +97,6 @@ public partial class BagSystem : Node
 
 		playerIndices[playerId] = playerIndex;
 		BroadcastBags();
-
 	}
 
 	private List<int> GenerateNewBag()
