@@ -13,7 +13,7 @@ public partial class GameManager : Node
 	private Node3D _mainScene;
 	private Node3D PlayerSpawner;
 
-	private int offset = -12;
+	private int offset = -15;
 	//private CanvasLayer _canvasLayer;
 	//private List<Player> _players = new();
 
@@ -32,19 +32,29 @@ public partial class GameManager : Node
 		}
 	}
 
-
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void QuitGame()
 	{
-		GD.Print("Game is stopping...");
-
-		// Ensure all player nodes are removed safely
-		if (PlayerSpawner != null && PlayerSpawner.IsInsideTree())
-		{
-			PlayerSpawner.CallDeferred("queue_free");
-		}
-
 		// Handle scene change with deferred call to avoid timing issues
 		GetTree().CallDeferred("change_scene_to_packed", ResourceLoader.Load<PackedScene>("res://Scenes/main_menu.tscn"));
+	}
+
+	public void StartRequestQuitGame()
+	{
+		Rpc(nameof(RequestQuitGame));
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void RequestQuitGame()
+	{
+		if (multiplayer_Manager.Multiplayer.IsServer())
+		{
+			foreach (int id in multiplayer_Manager.Multiplayer.GetPeers())
+			{
+				RpcId(id, nameof(QuitGame));
+			}
+			QuitGame();
+		}
 	}
 
 	public void AddPlayer(int id, string playername)
@@ -54,10 +64,10 @@ public partial class GameManager : Node
 		Board.Name = id.ToString();
 		_bagSystem.InitializePlayerBag(id);
 		Board.Position += new Vector3(offset, 0, 0);
-		offset += 20;
+		offset += 30;
 		PlayerSpawner.CallDeferred("add_child", Board);
 		Board.CallDeferred("SetPlayerName", playername);
-		Board.CallDeferred("SetTargetingPlayer", multiplayer_Manager.Multiplayer.GetPeers()[0]);
+		Board.Connect(nameof(Board.GameOverQuit), new Callable(this, nameof(StartRequestQuitGame)));
 		Board.CallDeferred("NewGame");
 	}
 }

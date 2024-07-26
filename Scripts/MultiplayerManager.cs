@@ -164,6 +164,47 @@ public partial class MultiplayerManager : Node
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void DisconnectAll()
+	{
+		GD.Print("Disconnecting all clients...");
+
+		if (Multiplayer.IsServer())
+		{
+			foreach (var id in Multiplayer.GetPeers())
+			{
+				RpcId(id, "DisconnectClient", id);
+			}
+			// Clear player names and reset game state
+			playerNames.Clear();
+			CurrentGameState = GameState.Lobby;
+
+			if (Multiplayer.MultiplayerPeer != null)
+			{
+				Multiplayer.MultiplayerPeer.DisconnectPeer(0);
+				Multiplayer.MultiplayerPeer = null;
+			}
+
+			EmitSignal(nameof(StopGame));
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void DisconnectClient(int id)
+	{
+		GD.Print("Client disconnecting...");
+		playerNames.Clear();
+		CurrentGameState = GameState.Lobby;
+
+		if (Multiplayer.MultiplayerPeer != null)
+		{
+			Multiplayer.MultiplayerPeer.DisconnectPeer(0);
+			Multiplayer.MultiplayerPeer = null;
+		}
+
+		EmitSignal(nameof(StopGame));
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void StartGame()
 	{
 		CurrentGameState = GameState.InGame;

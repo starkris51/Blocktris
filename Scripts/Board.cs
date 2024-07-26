@@ -9,6 +9,10 @@ public partial class Board : GridMap
 {
 	[Signal]
 	public delegate void GameStartedEventHandler();
+
+	[Signal]
+	public delegate void GameOverQuitEventHandler();
+
 	struct Cell
 	{
 		public bool isFilled;
@@ -278,6 +282,11 @@ public partial class Board : GridMap
 		return BoardData[x, y].isFilled;
 	}
 
+	public void GameOver()
+	{
+		EmitSignal(nameof(GameOverQuit));
+	}
+
 	public void PlacePiece(int piece)
 	{
 		int[,] matrix = _tetromino.GetMatrix();
@@ -301,13 +310,17 @@ public partial class Board : GridMap
 			}
 		}
 
-
 		CheckLines();
 		Rpc(nameof(RequestSyncBoard));
 		UpdateBoard();
 		CanStore = true;
 		RequestNextPiece();
 		UpdateUpcomingPieces();
+
+		if (y > 20)
+		{
+			GameOver();
+		}
 
 	}
 
@@ -503,6 +516,8 @@ public partial class Board : GridMap
 		//GetNode<MultiplayerSynchronizer>("ServerSynchronizer").SetMultiplayerAuthority(PlayerID);
 		//GetNode<MultiplayerSynchronizer>("InputSynchronizer").SetMultiplayerAuthority(PlayerID);
 		//_bagSystem.GetPlayerBags(PlayerID);
+
+		//multiplayerManager.Connect(nameof(multiplayerManager.StopGame), new Callable(this, nameof(GameOver)));
 
 	}
 	public override void _Process(double delta)
