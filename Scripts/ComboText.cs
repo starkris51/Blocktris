@@ -22,6 +22,10 @@ public partial class ComboText : Node3D
 
 	public void DisplayCombo(int Combo)
 	{
+		if (Combo <= 0)
+		{
+			return;
+		}
 
 		_comboNumberText.Text = Combo.ToString();
 		//_comboText.Scale += new Vector3(Combo, Combo, Combo);

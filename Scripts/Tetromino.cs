@@ -333,6 +333,11 @@ public partial class Tetromino : GridMap
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void RotatePiece(bool clockwise)
 	{
+		if (!multiplayerManager.Multiplayer.IsServer())
+		{
+			return;
+		}
+
 		int oldrotationstate = rotationState;
 
 		if (!canUseTetromino)
@@ -350,6 +355,7 @@ public partial class Tetromino : GridMap
 		}
 
 		UpdatePiece();
+		Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 
 		int transition = transitionTable[oldrotationstate, clockwise ? 0 : 1];
 
@@ -372,15 +378,17 @@ public partial class Tetromino : GridMap
 			{
 				currentTSpin = IsTSpin();
 				UpdatePiece();
+				Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 				return;
 			}
 		}
 
 		rotationState = oldrotationstate;
 		UpdatePiece();
+		Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
 	public void UpdatePieceState(int newX, int newY, int newRotationState, int newPiece, int TSpinType)
 	{
 		x = newX;
@@ -394,7 +402,10 @@ public partial class Tetromino : GridMap
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void MovePiece(int dx, int dy)
 	{
-		//currentTSpin = TSpinType.None;
+		if (!multiplayerManager.Multiplayer.IsServer())
+		{
+			return;
+		}
 
 		if (!canUseTetromino)
 		{
@@ -419,11 +430,14 @@ public partial class Tetromino : GridMap
 			{
 				_board.PlacePiece((int)currentPiece);
 				isPlacedDelayActive = false;
+				Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 			}
 		}
 		else
 		{
+			currentTSpin = TSpinType.None;
 			UpdatePiece();
+			Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 		}
 	}
 
@@ -526,12 +540,18 @@ public partial class Tetromino : GridMap
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void HardDrop()
 	{
+		if (!multiplayerManager.Multiplayer.IsServer())
+		{
+			return;
+		}
+
 		while (!_board.CheckCollision())
 		{
 			y -= 1;
 		}
 		y += 1;
 		_board.PlacePiece((int)currentPiece);
+		Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 	}
 
 	public TetrisPiece GetPiece()
@@ -551,6 +571,7 @@ public partial class Tetromino : GridMap
 		x = 3;
 		rotationState = 0;
 		UpdatePiece();
+		Rpc(nameof(UpdatePieceState), x, y, rotationState, (int)currentPiece, (int)currentTSpin);
 	}
 
 	public override void _Ready()

@@ -55,7 +55,7 @@ public partial class InputHandler : MultiplayerSynchronizer
 		IsStart = true;
 		if (multiplayerManager.Multiplayer.IsServer())
 		{
-			_PieceFallTimer.WaitTime = 0.5f;
+			_PieceFallTimer.WaitTime = 1.0f;
 			_PieceFallTimer.OneShot = false;
 			_PieceFallTimer.Timeout += DropPiece;
 			_PieceFallTimer.Start();
@@ -145,7 +145,7 @@ public partial class InputHandler : MultiplayerSynchronizer
 		}
 		if (Input.IsActionJustPressed("StorePiece"))
 		{
-			_board.Rpc(nameof(_board.StorePiece));
+			_board.Rpc(nameof(_board.RequestStorePiece));
 		}
 		if (Input.IsActionJustPressed("HardDrop"))
 		{

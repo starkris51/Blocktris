@@ -57,6 +57,7 @@ public partial class Board : GridMap
 				SetCellItem(Position, BoardData[i, j].item, BoardData[i, j].orientation);
 			}
 		}
+
 	}
 
 	public void NewGame()
@@ -87,6 +88,26 @@ public partial class Board : GridMap
 			Rpc(nameof(HandleNextPiece), nextPiece);
 		}
 	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void RequestSyncBoard()
+	{
+		if (multiplayerManager.Multiplayer.IsServer())
+		{
+			BroadcastBoard(ConvertBoardToVariant());
+		}
+		else
+		{
+			RpcId(1, nameof(RequestSyncBoardFromServer)); // Assume 1 is the server ID
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+	public void RequestSyncBoardFromServer()
+	{
+		BroadcastBoard(ConvertBoardToVariant());
+	}
+
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	private void HandleNextPiece(int nextPiece)
@@ -192,6 +213,7 @@ public partial class Board : GridMap
 		if (rowsCleared > 0 || _tetromino.currentTSpin != Tetromino.TSpinType.None)
 		{
 			_LineClearText.RenderLineClearText(rowsCleared, _tetromino.currentTSpin, BackToBackCombo);
+			BroadcastLineClear(rowsCleared, _tetromino.currentTSpin, BackToBackCombo);
 		}
 
 		_tetromino.currentTSpin = Tetromino.TSpinType.None;
@@ -200,6 +222,7 @@ public partial class Board : GridMap
 		{
 			Combo++;
 			_ComboText.DisplayCombo(Combo);
+			BroadcastCombo(Combo);
 		}
 		else if (Combo <= 0 && rowsCleared > 0 && !IsCombo)
 		{
@@ -213,6 +236,37 @@ public partial class Board : GridMap
 
 		//RpcId(currentlyTargetingPlayer, nameof(AttackPlayer), currentlyTargetingPlayer, rowsCleared);
 	}
+
+	public void BroadcastLineClear(int lineClears, Tetromino.TSpinType tspin, int BackToBackCombo)
+	{
+		foreach (int id in multiplayerManager.Multiplayer.GetPeers())
+		{
+			RpcId(id, nameof(SyncLineClear), lineClears, (int)tspin, BackToBackCombo);
+		}
+	}
+
+
+	public void BroadcastCombo(int Combo)
+	{
+		foreach (int id in multiplayerManager.Multiplayer.GetPeers())
+		{
+			RpcId(id, nameof(SyncCombo), Combo);
+		}
+	}
+
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void SyncLineClear(int lineClears, int tspin, int BackToBackCombo)
+	{
+		_LineClearText.RenderLineClearText(lineClears, (Tetromino.TSpinType)tspin, BackToBackCombo);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void SyncCombo(int Combo)
+	{
+		_ComboText.DisplayCombo(Combo);
+	}
+
 
 	public bool IsOccupied(int x, int y)
 	{
@@ -247,14 +301,25 @@ public partial class Board : GridMap
 			}
 		}
 
+
 		CheckLines();
+		Rpc(nameof(RequestSyncBoard));
 		UpdateBoard();
 		CanStore = true;
 		RequestNextPiece();
 		UpdateUpcomingPieces();
 
-		Rpc(nameof(SyncBoard), ConvertBoardToVariant());
 	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
+	public void BroadcastBoard(Godot.Collections.Array boardArray)
+	{
+		foreach (int id in multiplayerManager.Multiplayer.GetPeers())
+		{
+			RpcId(id, nameof(SyncBoard), boardArray);
+		}
+	}
+
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 	public void SyncBoard(Godot.Collections.Array boardArray)
@@ -353,7 +418,7 @@ public partial class Board : GridMap
 		}
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
 	public void StorePiece()
 	{
 		if (!CanStore)
@@ -377,7 +442,30 @@ public partial class Board : GridMap
 		_storeTetromino.RenderPiece(StoredPiece);
 		UpdateUpcomingPieces();
 		CanStore = false;
+
+		foreach (int id in multiplayerManager.Multiplayer.GetPeers())
+		{
+			RpcId(id, nameof(SyncStoredPiece), StoredPiece);
+		}
 	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void RequestStorePiece()
+	{
+		if (multiplayerManager.Multiplayer.IsServer())
+		{
+			StorePiece();
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void SyncStoredPiece(int storedPiece)
+	{
+		StoredPiece = storedPiece;
+		_storeTetromino.RenderPiece(StoredPiece);
+		UpdateUpcomingPieces();
+	}
+
 	/*public override void _EnterTree()
 	{
 		Connect(nameof(BoardChanged), new Callable(this, nameof(BoardChanged)));
